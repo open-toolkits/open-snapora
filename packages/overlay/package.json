@@ -1,0 +1,32 @@
+{
+  "name": "@open-snapora/overlay",
+  "version": "0.1.0",
+  "description": "Host-agnostic Web screenshot annotation and overlay editor for open-snapora",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./pinned": {
+      "types": "./dist/pinned.d.ts",
+      "import": "./dist/pinned.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@open-snapora/shared": "workspace:*",
+    "desklog": "^1.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
+  }
+}

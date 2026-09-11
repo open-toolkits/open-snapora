@@ -1,0 +1,38 @@
+{
+  "name": "open-snapora-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-framework desktop screenshot & annotation suite for Electron, Tauri, and Webview",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r --filter=./packages/* run build",
+    "dev:overlay": "pnpm --filter @open-snapora/overlay dev",
+    "demos:electron": "pnpm --filter demo-electron start",
+    "demos:tauri": "pnpm --filter demo-tauri tauri dev",
+    "demos:tauri:check": "cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
+    "demos:tauri:build": "pnpm --filter demo-tauri build",
+    "demo:electron": "pnpm --filter demo-electron start",
+    "demo:tauri": "pnpm --filter demo-tauri tauri dev",
+    "check:all": "pnpm run typecheck && pnpm run build && cargo check --manifest-path crates/tauri-plugin-snapora/Cargo.toml && cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r exec rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "allowBuilds": {
+      "esbuild": true,
+      "electron": true
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "electron"
+    ]
+  },
+  "dependencies": {
+    "desklog": "^1.0.2"
+  }
+}

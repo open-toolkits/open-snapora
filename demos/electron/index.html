@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>open-snapora · Electron Demo</title>
+    <!-- 引入 Satoshi 高级无衬线字体与 Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-color: #060913;
+        --card-bg: linear-gradient(180deg, rgba(17, 23, 38, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --card-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        --text-main: #f8fafc;
+        --text-sub: #94a3b8;
+        --text-muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-color);
+        background-image: 
+          radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.14) 0%, transparent 60%),
+          radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 100% 100%, 28px 28px;
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px;
+        -webkit-font-smoothing: antialiased;
+        user-select: none;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 680px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .header-block {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .main-title {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(90deg, #ffffff 0%, #a5f3fc 35%, #38bdf8 70%, #ffffff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .badge-pill {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        background: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: var(--text-sub);
+        line-height: 1.6;
+      }
+
+      .craft-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        box-shadow: var(--card-shadow);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 24px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        transition: border-color 0.3s ease;
+      }
+
+      .craft-card:hover {
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .controls {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--text-sub);
+      }
+
+      select {
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--text-main);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+
+      select:focus {
+        border-color: #38bdf8;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-sub);
+        cursor: pointer;
+        margin-top: 18px;
+      }
+
+      .checkbox-label input {
+        accent-color: #0284c7;
+        cursor: pointer;
+      }
+
+      .action-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .btn-capture-hero {
+        position: relative;
+        isolation: isolate;
+        background: linear-gradient(115deg, #1d4ed8 0%, #2563eb 25%, #06b6d4 50%, #3b82f6 75%, #1d4ed8 100%);
+        background-size: 260% 260%;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        border: 1px solid rgba(56, 189, 248, 0.45);
+        border-radius: 12px;
+        padding: 13px 26px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 0 24px -2px rgba(6, 182, 212, 0.45), 0 8px 20px -4px rgba(37, 99, 235, 0.4);
+        transition: transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      .btn-capture-hero:hover {
+        transform: translateY(-1px);
+        border-color: rgba(103, 232, 249, 0.8);
+        box-shadow: 0 0 32px 2px rgba(6, 182, 212, 0.65), 0 10px 24px -2px rgba(37, 99, 235, 0.5);
+      }
+
+      .btn-capture-hero:active {
+        transform: scale(0.98);
+      }
+
+      .btn-capture-hero svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      .hotkey-tip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      kbd {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        padding: 3px 7px;
+        color: var(--text-sub);
+      }
+
+      .console-panel {
+        background: rgba(4, 7, 16, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+
+      .console-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .window-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+
+      .dot-red { background: #ef4444; opacity: 0.8; }
+      .dot-yellow { background: #f59e0b; opacity: 0.8; }
+      .dot-green { background: #10b981; opacity: 0.8; }
+
+      .console-title {
+        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--text-muted);
+      }
+
+      pre#outputLog {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+        line-height: 1.6;
+        color: #38bdf8;
+        padding: 16px;
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      .preview-container {
+        padding: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: center;
+      }
+
+      img.preview-img {
+        max-width: 100%;
+        max-height: 260px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+      }
+      /* 快捷键设置面板与交互设计 */
+      .hotkey-setting-section {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 16px;
+        margin-top: 4px;
+      }
+
+      .hotkey-setting-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .hotkey-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .label-text {
+        font-size: 13px;
+        color: var(--text-sub);
+      }
+
+      .kbd-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-modify {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #cbd5e1;
+        font-size: 12.5px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-modify:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(56, 189, 248, 0.4);
+        color: #f8fafc;
+      }
+
+      .prompt-text {
+        font-size: 13px;
+        color: #38bdf8;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .recording-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 1px dashed rgba(34, 211, 238, 0.5);
+        border-radius: 8px;
+        padding: 6px 12px;
+        color: #67e8f9;
+        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .recording-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #06b6d4;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+      }
+
+      .edit-btn-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-save {
+        background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+        border: 1px solid rgba(56, 189, 248, 0.5);
+        color: #ffffff;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+        transition: all 0.15s ease;
+      }
+
+      .btn-save:hover {
+        filter: brightness(1.1);
+        box-shadow: 0 0 16px rgba(6, 182, 212, 0.5);
+      }
+
+      .btn-cancel {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #94a3b8;
+        font-size: 12.5px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #cbd5e1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="header-block">
+        <div class="title-row">
+          <h1 class="main-title">open-snapora</h1>
+          <span class="badge-pill">Electron Demo</span>
+        </div>
+        <p class="subtitle">
+          基于 Electron 宿主插件与全屏透明窗口控制器的桌面截图标注演示。
+        </p>
+      </div>
+
+      <div class="craft-card">
+        <div class="controls">
+          <div class="form-group">
+            <label for="locale">界面多语言</label>
+            <select id="locale">
+              <option value="zh-CN" selected>简体中文 (zh-CN)</option>
+              <option value="en-US">English (en-US)</option>
+              <option value="ja-JP">日本語 (ja-JP)</option>
+              <option value="ko-KR">한국어 (ko-KR)</option>
+              <option value="es-ES">Español (es-ES)</option>
+            </select>
+          </div>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="showFeedback" checked />
+            复制后弹出轻提示动画
+          </label>
+        </div>
+
+        <div class="action-row">
+          <button class="btn-capture-hero" id="captureBtn">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 4h4v2H6v2H4V4zm16 0h-4v2h2v2h2V4zM4 20h4v-2H6v-2H4v4zm16 0h-4v-2h2v-2h2v4zM9 9h6v6H9V9z"/>
+            </svg>
+            <span>立即截图标注 (Capture)</span>
+          </button>
+        </div>
+
+        <!-- 快捷键配置区域 -->
+        <div class="hotkey-setting-section">
+          <!-- 默认展示状态 -->
+          <div id="hotkey-view-mode" class="hotkey-setting-block">
+            <div class="hotkey-left">
+              <span class="label-text">当前截图快捷键：</span>
+              <div id="current-hotkey-tags" class="kbd-group">
+                <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>A</kbd>
+              </div>
+            </div>
+            <button id="btn-edit-hotkey" class="btn-modify">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+              修改快捷键
+            </button>
+          </div>
+
+          <!-- 修改中状态 -->
+          <div id="hotkey-edit-mode" class="hotkey-setting-block" style="display: none;">
+            <div class="hotkey-left">
+              <span class="prompt-text">
+                <span class="recording-dot"></span>
+                请在键盘上按下新的快捷键组合：
+              </span>
+              <div class="recording-pill">
+                <span id="recording-preview">等待输入...</span>
+              </div>
+            </div>
+            <div class="edit-btn-group">
+              <button id="btn-save-hotkey" class="btn-save">保存</button>
+              <button id="btn-cancel-hotkey" class="btn-cancel">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="console-panel">
+        <div class="console-header">
+          <div class="window-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <span class="console-title">ELECTRON_IPC_STREAM</span>
+          <span style="font-size: 11px; color: #64748b;">OUTPUT</span>
+        </div>
+        <pre id="outputLog">// 就绪状态：点击上方按钮或按下快捷键发起截屏...</pre>
+
+        <div class="preview-container" id="previewBox" style="display: none;">
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">最新截图捕获预览:</div>
+          <img id="previewImg" class="preview-img" alt="截图预览" />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const captureBtn = document.getElementById('captureBtn');
+      const localeSelect = document.getElementById('locale');
+      const showFeedbackCheck = document.getElementById('showFeedback');
+      const outputLog = document.getElementById('outputLog');
+      const previewBox = document.getElementById('previewBox');
+      const previewImg = document.getElementById('previewImg');
+
+      // 快捷键管理逻辑
+      const STORAGE_KEY = 'opensnapora_electron_hotkey';
+      let currentShortcut = localStorage.getItem(STORAGE_KEY) || 'Ctrl + Alt + A';
+      let recordingShortcut = '';
+
+      const viewMode = document.getElementById('hotkey-view-mode');
+      const editMode = document.getElementById('hotkey-edit-mode');
+      const hotkeyTagsContainer = document.getElementById('current-hotkey-tags');
+      const recordingPreview = document.getElementById('recording-preview');
+      const btnEdit = document.getElementById('btn-edit-hotkey');
+      const btnSave = document.getElementById('btn-save-hotkey');
+      const btnCancel = document.getElementById('btn-cancel-hotkey');
+
+      function renderShortcutTags(str) {
+        hotkeyTagsContainer.innerHTML = '';
+        const parts = str.split('+').map(s => s.trim()).filter(Boolean);
+        parts.forEach((part, index) => {
+          const kbd = document.createElement('kbd');
+          kbd.textContent = part;
+          hotkeyTagsContainer.appendChild(kbd);
+          if (index < parts.length - 1) {
+            hotkeyTagsContainer.appendChild(document.createTextNode(' + '));
+          }
+        });
+      }
+
+      renderShortcutTags(currentShortcut);
+
+      btnEdit.addEventListener('click', () => {
+        recordingShortcut = '';
+        recordingPreview.textContent = '等待输入...';
+        viewMode.style.display = 'none';
+        editMode.style.display = 'flex';
+      });
+
+      btnCancel.addEventListener('click', () => {
+        recordingShortcut = '';
+        editMode.style.display = 'none';
+        viewMode.style.display = 'flex';
+      });
+
+      btnSave.addEventListener('click', () => {
+        if (recordingShortcut) {
+          currentShortcut = recordingShortcut;
+          localStorage.setItem(STORAGE_KEY, currentShortcut);
+          renderShortcutTags(currentShortcut);
+          outputLog.textContent = `>> 截图快捷键已更新为: ${currentShortcut}`;
+        }
+        editMode.style.display = 'none';
+        viewMode.style.display = 'flex';
+      });
+
+      // 快捷键录制事件监听
+      window.addEventListener('keydown', (e) => {
+        if (editMode.style.display === 'flex') {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const modifiers = [];
+          if (e.ctrlKey) modifiers.push('Ctrl');
+          if (e.altKey) modifiers.push('Alt');
+          if (e.shiftKey) modifiers.push('Shift');
+          if (e.metaKey) modifiers.push('Meta');
+
+          let key = e.key;
+          if (['Control', 'Alt', 'Shift', 'Meta'].includes(key)) {
+            recordingPreview.textContent = modifiers.join(' + ') + ' + ...';
+            return;
+          }
+
+          if (key.length === 1) {
+            key = key.toUpperCase();
+          }
+
+          const allKeys = [...modifiers, key];
+          recordingShortcut = allKeys.join(' + ');
+          recordingPreview.textContent = recordingShortcut;
+          return;
+        }
+
+        // 非录制状态下，检查是否匹配自定义快捷键
+        if (matchShortcut(e, currentShortcut)) {
+          e.preventDefault();
+          triggerCapture();
+        }
+      });
+
+      function matchShortcut(e, shortcutStr) {
+        const parts = shortcutStr.split('+').map(s => s.trim().toLowerCase());
+        const hasCtrl = parts.includes('ctrl') || parts.includes('control');
+        const hasAlt = parts.includes('alt');
+        const hasShift = parts.includes('shift');
+        const hasMeta = parts.includes('meta') || parts.includes('cmd') || parts.includes('command');
+        
+        if (e.ctrlKey !== hasCtrl) return false;
+        if (e.altKey !== hasAlt) return false;
+        if (e.shiftKey !== hasShift) return false;
+        if (e.metaKey !== hasMeta) return false;
+
+        const mainKey = parts.find(p => !['ctrl', 'control', 'alt', 'shift', 'meta', 'cmd', 'command'].includes(p));
+        if (!mainKey) return false;
+
+        return e.key.toLowerCase() === mainKey.toLowerCase() || e.code.toLowerCase() === `key${mainKey.toLowerCase()}`;
+      }
+
+      async function triggerCapture() {
+        outputLog.textContent = '>> 截图会话已建立，全屏透明遮罩已启动...';
+        try {
+          if (!window.electronSnapora) {
+            outputLog.textContent = '错误: 未找到 window.electronSnapora，请检查 preload 注入。';
+            return;
+          }
+
+          const result = await window.electronSnapora.capture({
+            locale: localeSelect.value,
+            showCopyFeedback: showFeedbackCheck.checked,
+            defaultTool: 'select',
+          });
+
+          if (result.status === 'completed') {
+            const displayResult = {
+              status: result.status,
+              displayId: result.displayId,
+              bounds: result.bounds,
+              mimeType: result.mimeType,
+              output: result.output,
+              byteLength: result.data ? result.data.byteLength : 0,
+            };
+            outputLog.textContent = JSON.stringify(displayResult, null, 2);
+
+            // 显示图片预览
+            const blob = new Blob([result.data], { type: result.mimeType });
+            previewImg.src = URL.createObjectURL(blob);
+            previewBox.style.display = 'block';
+          } else {
+            outputLog.textContent = JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          outputLog.textContent = '调用异常: ' + (err.message || String(err));
+        }
+      }
+
+      captureBtn.addEventListener('click', triggerCapture);
+    </script>
+  </body>
+</html>

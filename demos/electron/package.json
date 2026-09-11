@@ -1,0 +1,16 @@
+{
+  "name": "demo-electron",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@open-snapora/electron": "workspace:*"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0"
+  }
+}

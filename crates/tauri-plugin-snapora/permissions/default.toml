@@ -1,0 +1,15 @@
+[default]
+description = "Default permissions for snapora plugin"
+permissions = [
+    "allow-capture",
+    "allow-cancel-active",
+    "allow-overlay-ready",
+    "allow-overlay-prepared",
+    "allow-feedback-ready",
+    "allow-cancel",
+    "allow-report-error",
+    "allow-output",
+    "allow-confirm",
+    "allow-log-message",
+    "allow-get-log-path"
+]

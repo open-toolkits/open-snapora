@@ -1,0 +1,23 @@
+{
+  "name": "demo-tauri",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/sync-overlay.mjs && vite",
+    "build": "node scripts/sync-overlay.mjs && tsc && vite build",
+    "start": "tauri dev",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@open-snapora/tauri": "workspace:*",
+    "@tauri-apps/api": "^2.0.0",
+    "desklog": "^1.0.2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
+  }
+}

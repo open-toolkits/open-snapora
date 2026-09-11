@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>open-snapora 独立浏览器预览与交互调试</title>
+  </head>
+  <body>
+    <!-- 引入主应用模板结构 -->
+    <main id="app" aria-live="polite">
+      <div class="capture-surface" data-state="waiting">
+        <canvas class="screen-frame" hidden></canvas>
+        <canvas class="annotation-canvas" aria-label="Screenshot annotations"></canvas>
+        <div class="screen-mask" aria-hidden="true"></div>
+        <div class="selection" role="group" aria-label="Screenshot selection" hidden>
+          <output class="size-hint" aria-live="off"></output>
+          <span class="resize-handle handle-nw" data-handle="nw" aria-hidden="true"></span>
+          <span class="resize-handle handle-n" data-handle="n" aria-hidden="true"></span>
+          <span class="resize-handle handle-ne" data-handle="ne" aria-hidden="true"></span>
+          <span class="resize-handle handle-e" data-handle="e" aria-hidden="true"></span>
+          <span class="resize-handle handle-se" data-handle="se" aria-hidden="true"></span>
+          <span class="resize-handle handle-s" data-handle="s" aria-hidden="true"></span>
+          <span class="resize-handle handle-sw" data-handle="sw" aria-hidden="true"></span>
+          <span class="resize-handle handle-w" data-handle="w" aria-hidden="true"></span>
+        </div>
+        <div class="window-snap-preview" aria-hidden="true" hidden></div>
+        <aside class="selection-toolbar" role="toolbar" aria-label="Screenshot actions" hidden>
+          <div class="toolbar-content">
+            <div class="tool-group" role="group" aria-label="Annotation tools">
+              <button class="tool-button" data-tool="rectangle" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rectangle" /></svg>
+              </button>
+              <button class="tool-button" data-tool="ellipse" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-ellipse" /></svg>
+              </button>
+              <button class="tool-button" data-tool="arrow" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow" /></svg>
+              </button>
+              <button class="tool-button" data-tool="brush" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-brush" /></svg>
+              </button>
+              <button class="tool-button" data-tool="text" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-text" /></svg>
+              </button>
+              <button class="tool-button" data-tool="mosaic" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-mosaic" /></svg>
+              </button>
+              <button class="tool-button" data-tool="watermark" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-watermark" /></svg>
+              </button>
+            </div>
+            <div class="toolbar-separator" role="separator"></div>
+            <div class="history-group" role="group" aria-label="History">
+              <button class="action-button undo-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-undo" /></svg>
+              </button>
+              <button class="action-button redo-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-redo" /></svg>
+              </button>
+            </div>
+            <div class="toolbar-separator" role="separator"></div>
+            <div class="action-group" role="group" aria-label="Output actions">
+              <button class="action-button save-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-save" /></svg>
+              </button>
+              <button class="action-button pin-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-pin" /></svg>
+              </button>
+              <button class="action-button cancel-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-close" /></svg>
+              </button>
+              <button class="action-button confirm-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="preset-panel" role="group" aria-label="Style presets" hidden>
+            <div class="stroke-presets">
+              <div class="line-width-group" role="group">
+                <button class="line-width-button" data-line-width="2" type="button"><span class="line-width-dot" style="--dot-size: 4px;"></span></button>
+                <button class="line-width-button active" data-line-width="4" type="button"><span class="line-width-dot" style="--dot-size: 7px;"></span></button>
+                <button class="line-width-button" data-line-width="8" type="button"><span class="line-width-dot" style="--dot-size: 11px;"></span></button>
+              </div>
+            </div>
+            <div class="text-presets" hidden>
+              <div class="text-style-group" role="group">
+                <button class="text-style-button active" data-text-style="default" type="button">A</button>
+                <button class="text-style-button" data-text-style="fill" type="button">A</button>
+                <button class="text-style-button" data-text-style="shadow" type="button">A</button>
+              </div>
+              <div class="font-control">
+                <select class="font-size-select">
+                  <option value="12">12</option>
+                  <option value="16" selected>16</option>
+                  <option value="20">20</option>
+                  <option value="28">28</option>
+                  <option value="36">36</option>
+                </select>
+              </div>
+            </div>
+            <div class="mosaic-presets" hidden>
+              <div class="range-control mosaic-strength-control">
+                <span class="range-label">强度</span>
+                <input class="mosaic-strength-input" type="range" min="4" max="24" step="2" value="8" />
+                <output class="range-output mosaic-strength-output">8px</output>
+              </div>
+            </div>
+            <div class="watermark-presets" hidden>
+              <input class="watermark-text-input" type="text" value="机密文件 请勿外传" maxlength="30" />
+              <div class="range-control watermark-opacity-control">
+                <span class="range-label">不透明度</span>
+                <input class="watermark-opacity-input" type="range" min="10" max="60" step="5" value="20" />
+                <output class="range-output watermark-opacity-output">20%</output>
+              </div>
+            </div>
+            <div class="color-control">
+              <div class="color-palette" role="radiogroup">
+                <button class="color-button active" data-color="#e02424" style="--swatch-color: #e02424;" type="button"></button>
+                <button class="color-button" data-color="#f59e0b" style="--swatch-color: #f59e0b;" type="button"></button>
+                <button class="color-button" data-color="#10b981" style="--swatch-color: #10b981;" type="button"></button>
+                <button class="color-button" data-color="#3b82f6" style="--swatch-color: #3b82f6;" type="button"></button>
+                <button class="color-button" data-color="#8b5cf6" style="--swatch-color: #8b5cf6;" type="button"></button>
+                <button class="color-button" data-color="#ffffff" style="--swatch-color: #ffffff;" type="button"></button>
+                <button class="color-button" data-color="#111827" style="--swatch-color: #111827;" type="button"></button>
+              </div>
+              <div class="color-custom-trigger">
+                <input class="color-input" type="color" value="#e02424" />
+                <div class="color-picker-popover" hidden>
+                  <div class="color-picker-saturation"><div class="color-picker-selector"></div></div>
+                  <input class="color-picker-hue" type="range" min="0" max="360" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <div class="text-editor-container" hidden>
+          <textarea class="text-editor" rows="1" spellcheck="false"></textarea>
+        </div>
+        <div class="status" role="status" aria-live="polite" hidden></div>
+        <div class="copy-feedback" role="status" aria-live="polite" hidden>
+          <svg class="copy-feedback-icon" viewBox="0 0 24 24"><use href="#icon-check" /></svg>
+          <span class="copy-feedback-text">已复制到剪贴板</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- SVG 图标系统 -->
+    <svg class="icon-defs" aria-hidden="true" style="display: none;">
+      <symbol id="icon-rectangle" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2" /></symbol>
+      <symbol id="icon-ellipse" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 19 19 5M11 5h8v8" /></symbol>
+      <symbol id="icon-brush" viewBox="0 0 24 24"><path d="m14 4 6 6-9 9H5v-6l9-9Z" /></symbol>
+      <symbol id="icon-text" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M8 20h8" /></symbol>
+      <symbol id="icon-mosaic" viewBox="0 0 24 24"><path d="M4 14 14 4M5 20 20 5M11 20l9-9" /></symbol>
+      <symbol id="icon-watermark" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M7 12h10" /></symbol>
+      <symbol id="icon-undo" viewBox="0 0 24 24"><path d="m9 7-4 4 4 4M5 11h8.5a5.5 5.5 0 0 1 5.5 5.5" /></symbol>
+      <symbol id="icon-redo" viewBox="0 0 24 24"><path d="m15 7 4 4-4 4M19 11h-8.5A5.5 5.5 0 0 0 5 16.5" /></symbol>
+      <symbol id="icon-save" viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 16v3h14v-3" /></symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 3 3v2H7v-2l3-3-1-6Z" /><path d="M12 14v7" /></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12.5 4.3 4.3L19 7" /></symbol>
+    </svg>
+
+    <!-- 启动脚本：自动注入 Mock 桥接 -->
+    <script type="module">
+      import { createMockOverlayBridge } from './demo/mock-bridge.ts';
+      import { mountOverlay } from './main.ts';
+
+      const mockBridge = createMockOverlayBridge();
+      window.__SNAPORA_MOCK__ = mockBridge;
+      mountOverlay({ bridge: mockBridge });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "default",
+  "description": "Default capabilities for open-snapora demo app",
+  "windows": ["*"],
+  "permissions": [
+    "core:default",
+    "snapora:default"
+  ]
+}
