@@ -1,6 +1,7 @@
 {
   "name": "@open-snapora/overlay",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "private": true,
   "description": "Host-agnostic Web screenshot annotation and overlay editor for open-snapora",
   "license": "MIT",
   "author": "open-snapora authors",
@@ -21,10 +22,6 @@
     "pin-to-desktop",
     "open-snapora"
   ],
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "files": [
     "dist",
     "README.md",

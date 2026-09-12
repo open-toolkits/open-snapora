@@ -1,13 +1,13 @@
 {
   "name": "@open-snapora/electron",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Electron host adapter and plugin for open-snapora",
   "license": "MIT",
   "author": "open-snapora authors",
   "homepage": "https://github.com/open-toolkits/open-snapora#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/open-toolkits/open-snapora.git",
+    "url": "git+https://github.com/open-toolkits/open-snapora.git",
     "directory": "packages/electron"
   },
   "bugs": {
@@ -69,10 +69,8 @@
   "peerDependencies": {
     "electron": ">=30"
   },
-  "dependencies": {
-    "@open-snapora/shared": "workspace:*"
-  },
   "devDependencies": {
+    "@open-snapora/shared": "workspace:*",
     "@types/node": "^22.0.0",
     "electron": "^34.0.0",
     "tsup": "^8.3.6",

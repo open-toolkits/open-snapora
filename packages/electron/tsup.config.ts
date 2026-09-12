@@ -12,7 +12,10 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   target: 'node20',
   platform: 'node',
-  dts: true,
+  dts: {
+    resolve: ['@open-snapora/shared'],
+  },
+  noExternal: ['@open-snapora/shared'],
   shims: true,
   sourcemap: true,
   clean: false,

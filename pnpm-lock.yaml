@@ -52,11 +52,10 @@ importers:
         version: 6.4.3(@types/node@22.20.2)
 
   packages/electron:
-    dependencies:
+    devDependencies:
       '@open-snapora/shared':
         specifier: workspace:*
         version: link:../shared
-    devDependencies:
       '@types/node':
         specifier: ^22.0.0
         version: 22.20.2
@@ -96,14 +95,16 @@ importers:
         version: 5.7.3
 
   packages/tauri:
-    dependencies:
+    devDependencies:
       '@open-snapora/shared':
         specifier: workspace:*
         version: link:../shared
-    devDependencies:
       '@tauri-apps/api':
         specifier: ^2.0.0
         version: 2.11.1
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.1(postcss@8.5.28)(typescript@5.7.3)
       typescript:
         specifier: ^5.7.3
         version: 5.7.3

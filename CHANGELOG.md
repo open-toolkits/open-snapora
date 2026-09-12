@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2026-09-12
+
+### Architecture Refactoring & Pure Single-Package Publishing (单包架构重构与独立分发)
+
+- **Pure Self-Contained Bundle**:
+  - `@open-snapora/electron` and `@open-snapora/tauri` now bundle and inline all shared core logic and TypeScript types via `tsup` (`noExternal: ['@open-snapora/shared']`).
+  - Consumers no longer need to install `@open-snapora/shared` or `@open-snapora/overlay` separately.
+- **Internal Private Packages**:
+  - Marked `@open-snapora/shared` and `@open-snapora/overlay` as `"private": true`, keeping npm registry clean with only user-facing SDKs.
+
+---
+
 ## [1.0.1] - 2026-09-12
 
 ### Initial Release (初始版本发布)
