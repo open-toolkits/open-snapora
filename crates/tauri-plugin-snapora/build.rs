@@ -1,5 +1,6 @@
 const COMMANDS: &[&str] = &[
     "capture",
+    "prewarm",
     "cancel_active",
     "overlay_ready",
     "overlay_prepared",
@@ -8,6 +9,9 @@ const COMMANDS: &[&str] = &[
     "report_error",
     "output",
     "confirm",
+    "log_message",
+    "get_log_path",
+    "get_frame_image",
 ];
 
 fn main() {

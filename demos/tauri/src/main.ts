@@ -1,4 +1,4 @@
-import { capture } from '@open-snapora/tauri';
+import { capture, prewarm } from '@open-snapora/tauri';
 import { invoke } from '@tauri-apps/api/core';
 import { createRendererLogger } from 'desklog/renderer';
 
@@ -16,6 +16,17 @@ const logger = createRendererLogger({
 
 logger.info('Tauri Demo 页面初始化就绪');
 
+// 主界面运行起来后，在后台静默预热透明截图遮罩窗口，确保使用时直接秒级展开
+setTimeout(() => {
+  void prewarm()
+    .then(() => {
+      logger.info('截图遮罩窗口后台预热就绪，后续截屏将实现毫秒级秒开');
+    })
+    .catch((err) => {
+      logger.warn('截图遮罩窗口预热异常', err);
+    });
+}, 500);
+
 const captureBtn = document.getElementById('captureBtn') as HTMLButtonElement;
 const outputLog = document.getElementById('outputLog') as HTMLPreElement;
 
@@ -24,6 +35,7 @@ void invoke<string>('plugin:snapora|get_log_path').then((path) => {
   logger.info('系统日志文件已就绪', { path });
   outputLog.textContent = `// 操作系统日志文件: ${path}\n// 就绪状态：点击下方按钮或按快捷键开始截屏...`;
 }).catch(() => {});
+
 
 // 快捷键设置相关 DOM
 const hotkeyDisplayView = document.getElementById('hotkeyDisplayView') as HTMLDivElement;
@@ -179,11 +191,6 @@ async function doCapture() {
     logger.info('Tauri capture 返回结果', { status: result.status, output: (result as any).output, bounds: (result as any).bounds });
 
     if (result.status === 'completed') {
-      showToast(
-        '✅ 截图已成功复制到系统剪贴板！',
-        `选区尺寸: ${result.bounds.width} × ${result.bounds.height}，可直接在微信/飞书/文档中 Ctrl+V 粘贴！`
-      );
-
       outputLog.textContent = [
         '✅ 截图标注已完成并写入系统剪贴板！',
         `• 动作: ${result.output.action}`,

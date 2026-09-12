@@ -11,5 +11,7 @@ permissions = [
     "allow-output",
     "allow-confirm",
     "allow-log-message",
-    "allow-get-log-path"
+    "allow-get-log-path",
+    "allow-get-frame-image",
+    "allow-prewarm"
 ]

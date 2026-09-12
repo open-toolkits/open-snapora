@@ -75,10 +75,9 @@ if (existsSync(overlayDist)) {
         if (frame && (frame.dataUrl === 'tauri-blob' || !frame.dataUrl || frame.dataUrl.length < 50)) {
           try {
             const startFetch = performance.now();
-            const bytes = await invoke('plugin:snapora|get_frame_image');
-            const blob = new Blob([bytes], { type: 'image/png' });
-            frame.dataUrl = URL.createObjectURL(blob);
-            sendLog('Snapora:Overlay', 'Fetched frame binary IPC via ArrayBuffer in ' + Math.round(performance.now() - startFetch) + 'ms');
+            const dataUrl = await invoke('plugin:snapora|get_frame_image');
+            frame.dataUrl = dataUrl;
+            sendLog('Snapora:Overlay', 'Fetched frame image in ' + Math.round(performance.now() - startFetch) + 'ms');
           } catch(err) {
             sendLog('Snapora:Overlay:Error', 'get_frame_image failed: ' + err);
           }

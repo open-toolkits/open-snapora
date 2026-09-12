@@ -1,8 +1,24 @@
 use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, Runtime, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
 use crate::error::Error;
 use crate::models::{CapturedImageFrame, InitPayload};
+use std::sync::atomic::{AtomicIsize, Ordering};
 
 const OVERLAY_WINDOW_LABEL: &str = "snapora-overlay";
+
+/// 记录调用截图前系统激活的前台窗口句柄，截图结束时精准归还焦点
+static PREVIOUS_FOREGROUND_WINDOW: AtomicIsize = AtomicIsize::new(0);
+
+#[cfg(target_os = "windows")]
+type HWND = *mut std::ffi::c_void;
+#[cfg(target_os = "windows")]
+type BOOL = i32;
+
+#[cfg(target_os = "windows")]
+extern "system" {
+    fn GetForegroundWindow() -> HWND;
+    fn SetForegroundWindow(hWnd: HWND) -> BOOL;
+    fn IsWindow(hWnd: HWND) -> BOOL;
+}
 
 /// 创建或复用覆盖整个目标屏幕的透明无边框 Overlay 窗口
 pub fn show_overlay_window<R: Runtime>(
@@ -10,6 +26,12 @@ pub fn show_overlay_window<R: Runtime>(
     frame: &CapturedImageFrame,
     payload: &InitPayload,
 ) -> Result<WebviewWindow<R>, Error> {
+    // 记录呼出遮罩前的前台窗口
+    #[cfg(target_os = "windows")]
+    unsafe {
+        let fg = GetForegroundWindow();
+        PREVIOUS_FOREGROUND_WINDOW.store(fg as isize, Ordering::SeqCst);
+    }
     // 1. 若窗口已存在，先获取已有窗口，否则新建透明遮罩窗口
     let window = if let Some(existing) = app.get_webview_window(OVERLAY_WINDOW_LABEL) {
         existing
@@ -74,10 +96,21 @@ pub fn prewarm_overlay_window<R: Runtime>(app: &AppHandle<R>) -> Result<(), Erro
     Ok(())
 }
 
-/// 隐藏并清理 Overlay 窗口
+/// 隐藏并清理 Overlay 窗口，并将系统前台焦点归还给截图前的应用
 pub fn hide_overlay_window<R: Runtime>(app: &AppHandle<R>) -> Result<(), Error> {
     if let Some(window) = app.get_webview_window(OVERLAY_WINDOW_LABEL) {
         let _ = window.hide();
+    }
+
+    #[cfg(target_os = "windows")]
+    unsafe {
+        let prev = PREVIOUS_FOREGROUND_WINDOW.swap(0, Ordering::SeqCst);
+        if prev != 0 {
+            let hwnd = prev as HWND;
+            if IsWindow(hwnd) != 0 {
+                let _ = SetForegroundWindow(hwnd);
+            }
+        }
     }
     Ok(())
 }

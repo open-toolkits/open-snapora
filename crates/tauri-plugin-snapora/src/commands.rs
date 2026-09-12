@@ -226,6 +226,9 @@ pub async fn confirm<R: Runtime>(
     app: AppHandle<R>,
     payload: serde_json::Value,
 ) -> Result<(), Error> {
+    // 关键优化：收到 confirm 立即隐藏全屏遮罩并归还系统焦点，彻底消除鼠标消失与卡顿
+    let _ = window::hide_overlay_window(&app);
+
     crate::logger::write_log("Snapora:Rust", &format!("confirm() called with payload: {:?}", payload.get("result").and_then(|r| r.get("status"))));
     let session_mgr = app.state::<SessionManager>();
 
@@ -259,14 +262,10 @@ pub async fn confirm<R: Runtime>(
 
             let display_id = r.get("displayId").and_then(|d| d.as_str()).unwrap_or("primary").to_string();
 
-            // 若动作为复制，自动写入系统剪贴板
+            // 注意：复制或保存动作在 output 阶段已由用户点击时执行完毕，此处无需二次重复写入剪贴板
             let output_meta = if action_str == "save" {
-                let saved_path = output::save_png_to_disk(&data_bytes, None)?;
-                OutputMetadata::Save { file_path: saved_path }
+                OutputMetadata::Save { file_path: "saved".to_string() }
             } else {
-                if !data_bytes.is_empty() {
-                    let _ = output::copy_png_to_clipboard(&data_bytes);
-                }
                 OutputMetadata::Copy
             };
 
@@ -305,17 +304,31 @@ pub async fn get_log_path<R: Runtime>(_app: AppHandle<R>) -> Result<String, Erro
     Ok(crate::logger::get_log_file_path().to_string_lossy().to_string())
 }
 
-/// 前端通过二进制 IPC 极速拉取全屏截图原图（ArrayBuffer 零拷贝直达，耗时 < 10ms）
+/// 前端拉取全屏截图原图 Base64 DataURL（作为兜底支持）
 #[command]
 pub async fn get_frame_image<R: Runtime>(
     app: AppHandle<R>,
-) -> Result<tauri::ipc::Response, Error> {
+) -> Result<String, Error> {
     let session_mgr = app.state::<SessionManager>();
-    if let Some(bytes) = session_mgr.get_frame_bytes() {
-        Ok(tauri::ipc::Response::new(bytes))
-    } else {
-        Err(Error::CaptureFailed("未找到当前截屏图像数据".to_string()))
+    if let Some(payload) = session_mgr.get_init_payload() {
+        if let Some(frame) = payload.frames.first() {
+            if frame.data_url.starts_with("data:image/") {
+                return Ok(frame.data_url.clone());
+            }
+        }
     }
+    if let Some(bytes) = session_mgr.get_frame_bytes() {
+        let b64 = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &bytes);
+        return Ok(format!("data:image/png;base64,{b64}"));
+    }
+    Err(Error::CaptureFailed("未找到当前截屏图像数据".to_string()))
 }
+
+/// 在后台静默预热透明截图遮罩窗口（提前加载 WebView2 运行时与 UI 资源，避免冷启动延迟）
+#[command]
+pub async fn prewarm<R: Runtime>(app: AppHandle<R>) -> Result<(), Error> {
+    window::prewarm_overlay_window(&app)
+}
+
 
 

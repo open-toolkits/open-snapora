@@ -68,11 +68,20 @@ export async function cancel(): Promise<boolean> {
 }
 
 /**
+ * 在后台静默预热透明截图遮罩窗口（提前加载 WebView2 运行时，避免首次截图等待）
+ */
+export async function prewarm(): Promise<void> {
+  await invoke('plugin:snapora|prewarm');
+}
+
+/**
  * 默认导出的 Tauri 渲染端截图 API
  */
-export const snapora: ScreenshotRendererApi = {
+export const snapora: ScreenshotRendererApi & { prewarm: () => Promise<void> } = {
   capture,
   cancel,
+  prewarm,
 };
 
 export default snapora;
+

@@ -355,6 +355,18 @@
           "markdownDescription": "Denies the feedback_ready command without any pre-configured scope."
         },
         {
+          "description": "Enables the get_frame_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-frame-image",
+          "markdownDescription": "Enables the get_frame_image command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_frame_image command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-frame-image",
+          "markdownDescription": "Denies the get_frame_image command without any pre-configured scope."
+        },
+        {
           "description": "Enables the get_log_path command without any pre-configured scope.",
           "type": "string",
           "const": "allow-get-log-path",
@@ -415,6 +427,18 @@
           "markdownDescription": "Denies the overlay_ready command without any pre-configured scope."
         },
         {
+          "description": "Enables the prewarm command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-prewarm",
+          "markdownDescription": "Enables the prewarm command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the prewarm command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-prewarm",
+          "markdownDescription": "Denies the prewarm command without any pre-configured scope."
+        },
+        {
           "description": "Enables the report_error command without any pre-configured scope.",
           "type": "string",
           "const": "allow-report-error",
@@ -427,10 +451,10 @@
           "markdownDescription": "Denies the report_error command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`",
+          "description": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`"
+          "markdownDescription": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`"
         }
       ]
     }

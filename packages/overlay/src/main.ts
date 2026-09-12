@@ -1908,7 +1908,9 @@ function getSurfaceBounds(): Rect {
 }
 
 function getSurfaceSize(): Size {
-  return { width: surface.clientWidth, height: surface.clientHeight };
+  const width = surface.clientWidth || window.innerWidth || document.documentElement.clientWidth;
+  const height = surface.clientHeight || window.innerHeight || document.documentElement.clientHeight;
+  return { width, height };
 }
 
 function waitForCompositeFrames(frameCount = 2, maximumWaitMs = 48): Promise<void> {
@@ -1955,8 +1957,9 @@ function resolveWindowSnapRegions(
   displayBounds: Rect,
   viewportSize: Size
 ): Rect[] {
-  const scaleX = viewportSize.width > 0 ? displayBounds.width / viewportSize.width : 1;
-  const scaleY = viewportSize.height > 0 ? displayBounds.height / viewportSize.height : 1;
+  const dpr = window.devicePixelRatio || 1;
+  const scaleX = viewportSize.width > 0 ? displayBounds.width / viewportSize.width : dpr;
+  const scaleY = viewportSize.height > 0 ? displayBounds.height / viewportSize.height : dpr;
   return (payload.windowSnapRegions ?? [])
     .map((region) => {
       const left = Math.max(region.x, displayBounds.x);

@@ -15,6 +15,8 @@ Default permissions for snapora plugin
 - `allow-confirm`
 - `allow-log-message`
 - `allow-get-log-path`
+- `allow-get-frame-image`
+- `allow-prewarm`
 
 ## Permission Table
 
@@ -158,6 +160,32 @@ Denies the feedback_ready command without any pre-configured scope.
 <tr>
 <td>
 
+`snapora:allow-get-frame-image`
+
+</td>
+<td>
+
+Enables the get_frame_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-get-frame-image`
+
+</td>
+<td>
+
+Denies the get_frame_image command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `snapora:allow-get-log-path`
 
 </td>
@@ -281,6 +309,32 @@ Enables the overlay_ready command without any pre-configured scope.
 <td>
 
 Denies the overlay_ready command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-prewarm`
+
+</td>
+<td>
+
+Enables the prewarm command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-prewarm`
+
+</td>
+<td>
+
+Denies the prewarm command without any pre-configured scope.
 
 </td>
 </tr>

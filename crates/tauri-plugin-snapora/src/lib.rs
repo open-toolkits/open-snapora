@@ -24,12 +24,11 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("snapora")
         .setup(|app, _api| {
             app.manage(session::SessionManager::new());
-            // 预热透明置顶遮罩窗口，提前初始化 WebView2 运行时，彻底消除首次截图 2 秒冷启动延迟
-            let _ = window::prewarm_overlay_window(app);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             commands::capture,
+            commands::prewarm,
             commands::cancel_active,
             commands::overlay_ready,
             commands::overlay_prepared,

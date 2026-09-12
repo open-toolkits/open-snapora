@@ -103,7 +103,7 @@ input {
 /* 透明 Overlay 先接管系统光标，避免 WGC 把点击位置的旧箭头烘焙进首帧。 */
 .capture-surface[data-state='waiting'],
 .capture-surface[data-state='waiting'] * {
-  cursor: none !important;
+  cursor: default;
 }
 
 .capture-surface[data-state='waiting'] {
@@ -178,11 +178,11 @@ input {
   left: 0;
   z-index: 3;
   border: 2px solid var(--snapora-accent);
-  background: rgba(6, 182, 212, 0.15);
+  background: transparent;
   box-shadow:
     0 0 0 100vmax var(--snapora-mask),
-    0 0 24px rgba(6, 182, 212, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    0 0 16px -2px rgba(6, 182, 212, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   pointer-events: none;
   transition: transform 0.06s cubic-bezier(0.16, 1, 0.3, 1), width 0.06s cubic-bezier(0.16, 1, 0.3, 1), height 0.06s cubic-bezier(0.16, 1, 0.3, 1);
 }
