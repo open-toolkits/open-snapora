@@ -16,7 +16,7 @@
     "demo:electron": "pnpm --filter demo-electron start",
     "demo:tauri": "pnpm --filter demo-tauri tauri dev",
     "demo:tauri:exe": "pnpm --filter demo-tauri run build:exe",
-    "check:all": "pnpm run typecheck && pnpm run build && cargo check --manifest-path crates/tauri-plugin-snapora/Cargo.toml && cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
+    "check:all": "pnpm run build && pnpm run typecheck && cargo check --manifest-path crates/tauri-plugin-snapora/Cargo.toml && cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
     "typecheck": "pnpm -r run typecheck",
     "clean": "pnpm -r exec rimraf dist",
     "publish:dry-run": "node scripts/publish-packages.mjs --dry-run",
