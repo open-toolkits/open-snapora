@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-pinned-save"
+description = "Enables the pinned_save command without any pre-configured scope."
+commands.allow = ["pinned_save"]
+
+[[permission]]
+identifier = "deny-pinned-save"
+description = "Denies the pinned_save command without any pre-configured scope."
+commands.deny = ["pinned_save"]

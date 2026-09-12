@@ -214,6 +214,31 @@ pub async fn output<R: Runtime>(
         });
     }
 
+    if action == "pin" {
+        let session_mgr = app.state::<SessionManager>();
+        let init_payload = session_mgr.get_init_payload();
+        let locale = init_payload.as_ref().and_then(|p| p.options.locale.as_deref());
+        let bounds = payload
+            .get("result")
+            .and_then(|r| r.get("bounds"))
+            .and_then(|b| {
+                Some(ScreenshotBounds {
+                    x: b.get("x")?.as_f64()?,
+                    y: b.get("y")?.as_f64()?,
+                    width: b.get("width")?.as_f64()?,
+                    height: b.get("height")?.as_f64()?,
+                })
+            })
+            .unwrap_or(ScreenshotBounds { x: 0.0, y: 0.0, width: 200.0, height: 200.0 });
+
+        crate::pinned::create_pinned_window(&app, &data_bytes, &bounds, locale)?;
+        crate::logger::write_log("Snapora:Rust", "output() -> Pinned window created successfully!");
+        return Ok(ScreenshotOutputResponse::Completed {
+            action: "pin".to_string(),
+            file_path: None,
+        });
+    }
+
     Ok(ScreenshotOutputResponse::Completed {
         action: action.to_string(),
         file_path: None,
@@ -265,6 +290,8 @@ pub async fn confirm<R: Runtime>(
             // 注意：复制或保存动作在 output 阶段已由用户点击时执行完毕，此处无需二次重复写入剪贴板
             let output_meta = if action_str == "save" {
                 OutputMetadata::Save { file_path: "saved".to_string() }
+            } else if action_str == "pin" {
+                OutputMetadata::Pin
             } else {
                 OutputMetadata::Copy
             };

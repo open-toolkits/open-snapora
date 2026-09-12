@@ -8,6 +8,7 @@ pub mod error;
 pub mod logger;
 pub mod models;
 pub mod output;
+pub mod pinned;
 pub mod session;
 pub mod window;
 
@@ -24,6 +25,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("snapora")
         .setup(|app, _api| {
             app.manage(session::SessionManager::new());
+            app.manage(pinned::PinnedManager::new());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -40,6 +42,14 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::log_message,
             commands::get_log_path,
             commands::get_frame_image,
+            pinned::pinned_ready,
+            pinned::pinned_copy,
+            pinned::pinned_save,
+            pinned::pinned_close,
+            pinned::pinned_start_drag,
+            pinned::pinned_move_drag,
+            pinned::pinned_end_drag,
+            pinned::pinned_resize,
         ])
         .build()
 }

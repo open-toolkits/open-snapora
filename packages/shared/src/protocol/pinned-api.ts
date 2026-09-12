@@ -51,4 +51,7 @@ export interface PinnedImageApi {
 
   /** 结束窗口拖拽 */
   endDrag(): void;
+
+  /** 请求调整贴图窗口物理尺寸 */
+  resize?(size: { width: number; height: number }): void;
 }

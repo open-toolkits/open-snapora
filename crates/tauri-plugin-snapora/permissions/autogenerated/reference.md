@@ -17,6 +17,14 @@ Default permissions for snapora plugin
 - `allow-get-log-path`
 - `allow-get-frame-image`
 - `allow-prewarm`
+- `allow-pinned-ready`
+- `allow-pinned-copy`
+- `allow-pinned-save`
+- `allow-pinned-close`
+- `allow-pinned-start-drag`
+- `allow-pinned-move-drag`
+- `allow-pinned-end-drag`
+- `allow-pinned-resize`
 
 ## Permission Table
 
@@ -309,6 +317,214 @@ Enables the overlay_ready command without any pre-configured scope.
 <td>
 
 Denies the overlay_ready command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-close`
+
+</td>
+<td>
+
+Enables the pinned_close command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-close`
+
+</td>
+<td>
+
+Denies the pinned_close command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-copy`
+
+</td>
+<td>
+
+Enables the pinned_copy command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-copy`
+
+</td>
+<td>
+
+Denies the pinned_copy command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-end-drag`
+
+</td>
+<td>
+
+Enables the pinned_end_drag command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-end-drag`
+
+</td>
+<td>
+
+Denies the pinned_end_drag command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-move-drag`
+
+</td>
+<td>
+
+Enables the pinned_move_drag command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-move-drag`
+
+</td>
+<td>
+
+Denies the pinned_move_drag command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-ready`
+
+</td>
+<td>
+
+Enables the pinned_ready command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-ready`
+
+</td>
+<td>
+
+Denies the pinned_ready command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-resize`
+
+</td>
+<td>
+
+Enables the pinned_resize command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-resize`
+
+</td>
+<td>
+
+Denies the pinned_resize command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-save`
+
+</td>
+<td>
+
+Enables the pinned_save command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-save`
+
+</td>
+<td>
+
+Denies the pinned_save command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:allow-pinned-start-drag`
+
+</td>
+<td>
+
+Enables the pinned_start_drag command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`snapora:deny-pinned-start-drag`
+
+</td>
+<td>
+
+Denies the pinned_start_drag command without any pre-configured scope.
 
 </td>
 </tr>

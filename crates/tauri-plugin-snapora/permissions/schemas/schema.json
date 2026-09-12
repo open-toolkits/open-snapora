@@ -427,6 +427,102 @@
           "markdownDescription": "Denies the overlay_ready command without any pre-configured scope."
         },
         {
+          "description": "Enables the pinned_close command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-close",
+          "markdownDescription": "Enables the pinned_close command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_close command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-close",
+          "markdownDescription": "Denies the pinned_close command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_copy command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-copy",
+          "markdownDescription": "Enables the pinned_copy command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_copy command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-copy",
+          "markdownDescription": "Denies the pinned_copy command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_end_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-end-drag",
+          "markdownDescription": "Enables the pinned_end_drag command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_end_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-end-drag",
+          "markdownDescription": "Denies the pinned_end_drag command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_move_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-move-drag",
+          "markdownDescription": "Enables the pinned_move_drag command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_move_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-move-drag",
+          "markdownDescription": "Denies the pinned_move_drag command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_ready command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-ready",
+          "markdownDescription": "Enables the pinned_ready command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_ready command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-ready",
+          "markdownDescription": "Denies the pinned_ready command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_resize command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-resize",
+          "markdownDescription": "Enables the pinned_resize command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_resize command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-resize",
+          "markdownDescription": "Denies the pinned_resize command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_save command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-save",
+          "markdownDescription": "Enables the pinned_save command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_save command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-save",
+          "markdownDescription": "Denies the pinned_save command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the pinned_start_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pinned-start-drag",
+          "markdownDescription": "Enables the pinned_start_drag command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pinned_start_drag command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pinned-start-drag",
+          "markdownDescription": "Denies the pinned_start_drag command without any pre-configured scope."
+        },
+        {
           "description": "Enables the prewarm command without any pre-configured scope.",
           "type": "string",
           "const": "allow-prewarm",
@@ -451,10 +547,10 @@
           "markdownDescription": "Denies the report_error command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`",
+          "description": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`\n- `allow-pinned-ready`\n- `allow-pinned-copy`\n- `allow-pinned-save`\n- `allow-pinned-close`\n- `allow-pinned-start-drag`\n- `allow-pinned-move-drag`\n- `allow-pinned-end-drag`\n- `allow-pinned-resize`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`"
+          "markdownDescription": "Default permissions for snapora plugin\n#### This default permission set includes:\n\n- `allow-capture`\n- `allow-cancel-active`\n- `allow-overlay-ready`\n- `allow-overlay-prepared`\n- `allow-feedback-ready`\n- `allow-cancel`\n- `allow-report-error`\n- `allow-output`\n- `allow-confirm`\n- `allow-log-message`\n- `allow-get-log-path`\n- `allow-get-frame-image`\n- `allow-prewarm`\n- `allow-pinned-ready`\n- `allow-pinned-copy`\n- `allow-pinned-save`\n- `allow-pinned-close`\n- `allow-pinned-start-drag`\n- `allow-pinned-move-drag`\n- `allow-pinned-end-drag`\n- `allow-pinned-resize`"
         }
       ]
     }

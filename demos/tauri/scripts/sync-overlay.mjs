@@ -157,15 +157,148 @@ if (existsSync(overlayDist)) {
 
   writeFileSync(resolve(targetDir, 'tauri-bridge.js'), bridgeScript, 'utf8');
 
-  // 修改 index.html 引入桥接
+  // 修改 index.html 引入遮罩桥接
   const htmlPath = resolve(targetDir, 'index.html');
   let html = readFileSync(htmlPath, 'utf8');
   if (!html.includes('tauri-bridge.js')) {
-    html = html.replace('<head>', '<head>\n    <script src=\"./tauri-bridge.js\"></script>');
+    html = html.replace('<head>', '<head>\n    <script src="./tauri-bridge.js"></script>');
     writeFileSync(htmlPath, html, 'utf8');
   }
 
-  console.log('[open-snapora-tauri] Synced overlay assets to public/overlay successfully.');
+  // 注入针对置顶贴图窗口 (pinned.html) 的专属桥接脚本
+  const pinnedBridgeScript = `(function() {
+  const internals = window.__TAURI_INTERNALS__;
+  const invoke = internals ? internals.invoke : async () => {};
+
+  function sendLog(tag, msg) {
+    const text = typeof msg === 'object' ? JSON.stringify(msg) : String(msg);
+    console.log('[' + tag + '] ' + text);
+    invoke('plugin:snapora|log_message', { tag: tag, message: text }).catch(function() {});
+  }
+
+  sendLog('Snapora:Pinned', 'Pinned tauri-pinned-bridge.js loaded and ready.');
+
+  function listenEvent(eventName, callback) {
+    if (!internals) return () => {};
+    const handlerId = internals.transformCallback(function(e) {
+      sendLog('Snapora:Pinned:Event', eventName);
+      callback(e);
+    });
+    invoke('plugin:event|listen', {
+      event: eventName,
+      target: { kind: 'Any' },
+      handler: handlerId,
+    }).catch(function(err) {
+      sendLog('Snapora:Pinned:ListenError', String(err));
+    });
+
+    return function() {
+      invoke('plugin:event|unlisten', { event: eventName, eventId: handlerId }).catch(function() {});
+    };
+  }
+
+  function base64ToUint8Array(base64) {
+    if (!base64) return new Uint8Array(0);
+    const binary = atob(base64);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  let cachedPayload = null;
+  let initCallback = null;
+
+  // 页面加载即刻向 Rust 后台拉取贴图二进制及文案载荷
+  invoke('plugin:snapora|pinned_ready').then(function(res) {
+    sendLog('Snapora:Pinned', 'pinned_ready response received: ' + (res && res.dataBase64 ? res.dataBase64.length : 0));
+    const bytes = base64ToUint8Array(res.dataBase64);
+    cachedPayload = {
+      data: bytes,
+      mimeType: res.mimeType || 'image/png',
+      locale: res.locale || 'zh-CN',
+      menuLabels: res.menuLabels || {
+        actions: '操作',
+        copy: '复制 (Ctrl+C)',
+        copied: '已复制到剪贴板',
+        save: '保存为文件 (Ctrl+S)',
+        close: '关闭 (Esc)'
+      }
+    };
+    if (initCallback) {
+      initCallback(cachedPayload);
+    }
+  }).catch(function(err) {
+    sendLog('Snapora:Pinned:Error', 'pinned_ready failed: ' + err);
+  });
+
+  window.snaporaPinned = {
+    onInitialize(listener) {
+      initCallback = listener;
+      if (cachedPayload) {
+        listener(cachedPayload);
+      }
+      return function() {
+        if (initCallback === listener) {
+          initCallback = null;
+        }
+      };
+    },
+    onCopied(listener) {
+      return listenEvent('plugin:snapora:pinned_copied', function() {
+        listener();
+      });
+    },
+    copy() {
+      sendLog('Snapora:Pinned', 'Pinned calling copy()');
+      void invoke('plugin:snapora|pinned_copy').catch(function(e) {
+        sendLog('Snapora:Pinned:Error', 'pinned_copy error: ' + e);
+      });
+    },
+    save() {
+      sendLog('Snapora:Pinned', 'Pinned calling save()');
+      void invoke('plugin:snapora|pinned_save').catch(function(e) {
+        sendLog('Snapora:Pinned:Error', 'pinned_save error: ' + e);
+      });
+    },
+    close() {
+      sendLog('Snapora:Pinned', 'Pinned calling close()');
+      void invoke('plugin:snapora|pinned_close').catch(function(e) {
+        sendLog('Snapora:Pinned:Error', 'pinned_close error: ' + e);
+      });
+    },
+    startDrag(point) {
+      void invoke('plugin:snapora|pinned_start_drag', { point: point }).catch(function(e) {});
+    },
+    moveDrag(point) {
+      void invoke('plugin:snapora|pinned_move_drag', { point: point }).catch(function(e) {});
+    },
+    endDrag() {
+      void invoke('plugin:snapora|pinned_end_drag').catch(function(e) {});
+    },
+    resize(size) {
+      void invoke('plugin:snapora|pinned_resize', { payload: size }).catch(function(e) {});
+    }
+  };
+
+  sendLog('Snapora:Bridge', 'Injected window.snaporaPinned bridge successfully.');
+})();`;
+
+  writeFileSync(resolve(targetDir, 'tauri-pinned-bridge.js'), pinnedBridgeScript, 'utf8');
+
+  // 修改 pinned.html 引入贴图桥接
+  const pinnedHtmlPath = resolve(targetDir, 'pinned.html');
+  if (existsSync(pinnedHtmlPath)) {
+    let pinnedHtml = readFileSync(pinnedHtmlPath, 'utf8');
+    if (!pinnedHtml.includes('tauri-pinned-bridge.js')) {
+      pinnedHtml = pinnedHtml.replace('<head>', '<head>\n    <script src="./tauri-pinned-bridge.js"></script>');
+      writeFileSync(pinnedHtmlPath, pinnedHtml, 'utf8');
+    }
+  }
+
+  console.log('[open-snapora-tauri] Synced overlay and pinned assets to public/overlay successfully.');
 } else {
   console.warn('[open-snapora-tauri] Warning: packages/overlay/dist not found, please build packages/overlay first.');
 }

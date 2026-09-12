@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-pinned-move-drag"
+description = "Enables the pinned_move_drag command without any pre-configured scope."
+commands.allow = ["pinned_move_drag"]
+
+[[permission]]
+identifier = "deny-pinned-move-drag"
+description = "Denies the pinned_move_drag command without any pre-configured scope."
+commands.deny = ["pinned_move_drag"]

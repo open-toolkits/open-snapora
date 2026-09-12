@@ -13,5 +13,13 @@ permissions = [
     "allow-log-message",
     "allow-get-log-path",
     "allow-get-frame-image",
-    "allow-prewarm"
+    "allow-prewarm",
+    "allow-pinned-ready",
+    "allow-pinned-copy",
+    "allow-pinned-save",
+    "allow-pinned-close",
+    "allow-pinned-start-drag",
+    "allow-pinned-move-drag",
+    "allow-pinned-end-drag",
+    "allow-pinned-resize"
 ]

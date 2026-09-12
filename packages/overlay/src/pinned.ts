@@ -142,6 +142,75 @@ export function mountPinned(options: MountPinnedOptions = {}): () => void {
   };
   contextMenu.addEventListener('keydown', handleMenuKeydown);
 
+  // 悬停状态更新，保证右上角关闭按钮及右下角拖拽抓手及时显现
+  const handlePointerEnter = () => {
+    surface.dataset.hovered = 'true';
+  };
+  const handlePointerLeave = () => {
+    delete surface.dataset.hovered;
+  };
+  surface.addEventListener('pointerenter', handlePointerEnter);
+  surface.addEventListener('pointerleave', handlePointerLeave);
+
+  const resizeHandle = document.querySelector<HTMLElement>('.pinned-resize-handle');
+  let isResizing = false;
+  let resizeStartScreenX = 0;
+  let resizeStartWidth = 0;
+  // 最小宽度不得小于右键菜单（160px）
+  const PINNED_MIN_WIDTH = 160;
+
+  if (resizeHandle) {
+    resizeHandle.addEventListener('pointerdown', (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      e.stopPropagation();
+      e.preventDefault();
+      isResizing = true;
+      resizeStartScreenX = e.screenX;
+      resizeStartWidth = window.innerWidth;
+      resizeHandle.setPointerCapture(e.pointerId);
+    });
+
+    resizeHandle.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!isResizing) return;
+      const naturalW = image.naturalWidth || window.innerWidth;
+      const naturalH = image.naturalHeight || window.innerHeight;
+      const aspectRatio = naturalW / naturalH;
+
+      const deltaX = e.screenX - resizeStartScreenX;
+      const newWidth = Math.max(PINNED_MIN_WIDTH, Math.round(resizeStartWidth + deltaX));
+      const newHeight = Math.round(newWidth / aspectRatio);
+
+      bridge.resize?.({ width: newWidth, height: newHeight });
+    });
+
+    const endResize = (e: PointerEvent) => {
+      if (!isResizing) return;
+      isResizing = false;
+      try {
+        resizeHandle.releasePointerCapture(e.pointerId);
+      } catch {}
+    };
+
+    resizeHandle.addEventListener('pointerup', endResize);
+    resizeHandle.addEventListener('pointercancel', endResize);
+  }
+
+  // 支持滚轮对贴图进行自由等比例缩放
+  const handleWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    const naturalW = image.naturalWidth || window.innerWidth;
+    const naturalH = image.naturalHeight || window.innerHeight;
+    const aspectRatio = naturalW / naturalH;
+
+    const zoomFactor = e.deltaY < 0 ? 1.06 : 0.94;
+    const currentW = window.innerWidth;
+    const newWidth = Math.max(PINNED_MIN_WIDTH, Math.round(currentW * zoomFactor));
+    const newHeight = Math.round(newWidth / aspectRatio);
+
+    bridge.resize?.({ width: newWidth, height: newHeight });
+  };
+  surface.addEventListener('wheel', handleWheel, { passive: false });
+
   const handlePointerDown = (event: PointerEvent) => {
     const target = event.target as Element;
     if (!contextMenu.hidden && !contextMenu.contains(target)) {
@@ -153,7 +222,8 @@ export function mountPinned(options: MountPinnedOptions = {}): () => void {
       event.button !== 0 ||
       event.target === closeButton ||
       closeButton.contains(target) ||
-      contextMenu.contains(target)
+      contextMenu.contains(target) ||
+      (resizeHandle && (event.target === resizeHandle || resizeHandle.contains(target)))
     ) {
       return;
     }

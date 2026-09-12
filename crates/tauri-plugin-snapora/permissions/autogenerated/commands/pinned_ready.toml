@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-pinned-ready"
+description = "Enables the pinned_ready command without any pre-configured scope."
+commands.allow = ["pinned_ready"]
+
+[[permission]]
+identifier = "deny-pinned-ready"
+description = "Denies the pinned_ready command without any pre-configured scope."
+commands.deny = ["pinned_ready"]

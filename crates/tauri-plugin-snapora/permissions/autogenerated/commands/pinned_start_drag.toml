@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-pinned-start-drag"
+description = "Enables the pinned_start_drag command without any pre-configured scope."
+commands.allow = ["pinned_start_drag"]
+
+[[permission]]
+identifier = "deny-pinned-start-drag"
+description = "Denies the pinned_start_drag command without any pre-configured scope."
+commands.deny = ["pinned_start_drag"]
