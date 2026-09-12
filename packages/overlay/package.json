@@ -1,8 +1,35 @@
 {
   "name": "@open-snapora/overlay",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "Host-agnostic Web screenshot annotation and overlay editor for open-snapora",
   "license": "MIT",
+  "author": "open-snapora authors",
+  "homepage": "https://github.com/open-toolkits/open-snapora#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-toolkits/open-snapora.git",
+    "directory": "packages/overlay"
+  },
+  "bugs": {
+    "url": "https://github.com/open-toolkits/open-snapora/issues"
+  },
+  "keywords": [
+    "screenshot",
+    "annotation",
+    "overlay",
+    "canvas",
+    "pin-to-desktop",
+    "open-snapora"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,6 +46,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

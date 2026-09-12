@@ -1,6 +1,6 @@
 {
   "name": "open-snapora-monorepo",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Cross-framework desktop screenshot & annotation suite for Electron, Tauri, and Webview",
   "license": "MIT",
@@ -12,11 +12,15 @@
     "demos:tauri": "pnpm --filter demo-tauri tauri dev",
     "demos:tauri:check": "cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
     "demos:tauri:build": "pnpm --filter demo-tauri build",
+    "demos:tauri:exe": "pnpm --filter demo-tauri run build:exe",
     "demo:electron": "pnpm --filter demo-electron start",
     "demo:tauri": "pnpm --filter demo-tauri tauri dev",
+    "demo:tauri:exe": "pnpm --filter demo-tauri run build:exe",
     "check:all": "pnpm run typecheck && pnpm run build && cargo check --manifest-path crates/tauri-plugin-snapora/Cargo.toml && cargo check --manifest-path demos/tauri/src-tauri/Cargo.toml",
     "typecheck": "pnpm -r run typecheck",
-    "clean": "pnpm -r exec rimraf dist"
+    "clean": "pnpm -r exec rimraf dist",
+    "publish:dry-run": "pnpm -r --filter=./packages/* publish --access public --no-git-checks --registry=https://registry.npmjs.org/ --dry-run",
+    "publish:packages": "pnpm -r --filter=./packages/* publish --access public --no-git-checks --registry=https://registry.npmjs.org/"
   },
   "devDependencies": {
     "rimraf": "^6.0.1",

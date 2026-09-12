@@ -1,8 +1,35 @@
 {
   "name": "@open-snapora/electron",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "Electron host adapter and plugin for open-snapora",
   "license": "MIT",
+  "author": "open-snapora authors",
+  "homepage": "https://github.com/open-toolkits/open-snapora#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-toolkits/open-snapora.git",
+    "directory": "packages/electron"
+  },
+  "bugs": {
+    "url": "https://github.com/open-toolkits/open-snapora/issues"
+  },
+  "keywords": [
+    "screenshot",
+    "annotation",
+    "electron",
+    "desktopCapturer",
+    "multi-monitor",
+    "open-snapora"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "main": "./dist/main/index.cjs",
   "module": "./dist/main/index.mjs",
@@ -36,6 +63,7 @@
   },
   "scripts": {
     "build": "tsup && node scripts/sync-overlay.mjs",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

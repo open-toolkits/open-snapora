@@ -1,33 +1,33 @@
 # Open Snapora
 
-> Cross-framework desktop screenshot and annotation suite for **Tauri (v2)** and **Electron**.
+> **Tauri (v2)** 및 **Electron** 데스크톱 애플리케이션을 위한 화면 캡처 & 이미지 주석 개발 툴킷.
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md)
 
 ---
 
-## Features
+## 주요 기능
 
-- ⚡ **Native Capture**: Hardware-accelerated multi-monitor capture via `xcap` (Tauri/Rust) and `desktopCapturer` (Electron).
-- 🎨 **Full Annotation Toolkit**: Rectangles, ellipses, arrows, freehand brush, mosaic/blur, text, undo/redo, color picker.
-- 📌 **Pin to Desktop**: Pin any captured area as a floating, draggable, resizable, always-on-top window.
-- 🖥️ **Multi-Display & HiDPI**: Automatic cross-monitor coordinate mapping and high-DPI scaling.
+- ⚡ **네이티브 캡처**: Tauri (Rust `xcap`) 및 Electron (`desktopCapturer`) 기반의 고성능 멀티 모니터 캡처.
+- 🎨 **주석 도구 모음**: 사각형, 원형, 화살표, 브러시, 모자이크, 텍스트 입력, 실행 취소/다시 실행, 스포이트.
+- 📌 **바탕화면 핀 고정**: 캡처 영역을 드래그 및 크기 조절 가능한 항상 위 플로팅 핀 창으로 띄우기.
+- 🖥️ **다중 모니터 & HiDPI**: 멀티 디스플레이 좌표 자동 매핑 및 고해상도 DPI 스케일링 대응.
 
 ---
 
-## Tauri (v2) Integration
+## Tauri (v2) 연동 가이드
 
-### 1. Install Dependency
+### 1. 패키지 설치
 
 ```bash
 npm install @open-snapora/tauri
-# or
+# 또는
 pnpm add @open-snapora/tauri
 ```
 
-### 2. Add Rust Plugin
+### 2. Rust 플러그인 추가
 
-In `src-tauri/Cargo.toml`:
+`src-tauri/Cargo.toml` 파일에 추가:
 
 ```toml
 [dependencies]
@@ -35,9 +35,9 @@ tauri = { version = "2.0", features = ["wry"] }
 tauri-plugin-snapora = { git = "https://github.com/open-toolkits/open-snapora.git" }
 ```
 
-### 3. Configure Permissions
+### 3. 권한(Capabilities) 설정
 
-In `src-tauri/capabilities/default.json`:
+`src-tauri/capabilities/default.json`에 추가:
 
 ```json
 {
@@ -51,9 +51,9 @@ In `src-tauri/capabilities/default.json`:
 }
 ```
 
-### 4. Register Plugin
+### 4. 플러그인 등록
 
-In `src-tauri/src/main.rs`:
+`src-tauri/src/main.rs`:
 
 ```rust
 fn main() {
@@ -64,7 +64,7 @@ fn main() {
 }
 ```
 
-### 5. Take Screenshot
+### 5. 화면 캡처 호출
 
 ```typescript
 import { capture, cancel, type ScreenshotResult } from '@open-snapora/tauri';
@@ -72,44 +72,44 @@ import { capture, cancel, type ScreenshotResult } from '@open-snapora/tauri';
 async function takeScreenshot() {
   try {
     const result: ScreenshotResult = await capture({
-      hideOwnerWindow: true, // Automatically hide caller window during capture
+      hideOwnerWindow: true, // 캡처 시 호출 창 자동 숨김
     });
 
     if (result.status === 'completed') {
-      console.log('Image bytes:', result.data);
-      console.log('Selection bounds:', result.bounds);
-      console.log('Output target:', result.output);
+      console.log('이미지 데이터:', result.data);
+      console.log('선택 영역:', result.bounds);
+      console.log('출력 액션:', result.output);
     }
   } catch (error) {
-    console.error('Capture failed:', error);
+    console.error('캡처 실패:', error);
   }
 }
 ```
 
-### 6. Build Release (Windows .exe)
+### 6. 릴리스 빌드 (Windows .exe)
 
 ```bash
 tauri build
 ```
 
-- **Portable standalone `.exe`**: Set `"bundle": { "active": false }` in `tauri.conf.json`.
-- **Installer package (NSIS / MSI)**: Set `"bundle": { "active": true, "targets": ["nsis", "msi"] }` in `tauri.conf.json`.
+- **단일 무설치 포터블 `.exe`**: `tauri.conf.json`에서 `"bundle": { "active": false }`로 설정.
+- **설치 프로그램 (NSIS / MSI)**: `tauri.conf.json`에서 `"bundle": { "active": true, "targets": ["nsis", "msi"] }`로 설정.
 
 ---
 
-## Electron Integration
+## Electron 연동 가이드
 
-### 1. Install Dependency
+### 1. 패키지 설치
 
 ```bash
 npm install @open-snapora/electron
-# or
+# 또는
 pnpm add @open-snapora/electron
 ```
 
-### 2. Initialize in Main Process
+### 2. 메인 프로세스 초기화
 
-In your main process script:
+메인 프로세스 스크립트에서:
 
 ```javascript
 const { app, BrowserWindow, globalShortcut } = require('electron');
@@ -120,10 +120,10 @@ let snapora = null;
 app.whenReady().then(() => {
   snapora = setupSnaporaMain({
     onComplete: (data) => {
-      console.log('Capture completed:', data);
+      console.log('캡처 완료:', data);
     },
     onCancel: (reason) => {
-      console.log('Capture canceled:', reason);
+      console.log('캡처 취소됨:', reason);
     },
   });
 
@@ -139,13 +139,13 @@ app.on('will-quit', () => {
 
 ---
 
-## API Reference
+## API 레퍼런스
 
 ### `capture(options?: ScreenshotOptions): Promise<ScreenshotResult>`
 
-| Option | Type | Default | Description |
+| 옵션 | 타입 | 기본값 | 설명 |
 | :--- | :--- | :--- | :--- |
-| `hideOwnerWindow` | `boolean` | `false` | Automatically hide current host window before capturing |
+| `hideOwnerWindow` | `boolean` | `false` | 캡처 전 호출자 창 자동 숨김 여부 |
 
 ### `ScreenshotResult`
 
@@ -165,14 +165,14 @@ type ScreenshotResult =
 
 ---
 
-## Example Demos
+## 예제 프로젝트
 
-Complete reference implementations are available in `demos/`:
-- `demos/tauri/`: Tauri (v2) integration example
-- `demos/electron/`: Electron integration example
+구현 참고를 위해 저장소의 `demos/` 디렉터리를 확인하세요:
+- `demos/tauri/`: Tauri (v2) 연동 예제
+- `demos/electron/`: Electron 연동 예제
 
 ---
 
-## License
+## 라이선스
 
 [MIT License](./LICENSE)

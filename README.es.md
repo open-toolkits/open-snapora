@@ -1,33 +1,33 @@
 # Open Snapora
 
-> Cross-framework desktop screenshot and annotation suite for **Tauri (v2)** and **Electron**.
+> Suite de captura de pantalla y anotación de imágenes para aplicaciones de escritorio con **Tauri (v2)** y **Electron**.
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md)
 
 ---
 
-## Features
+## Características
 
-- ⚡ **Native Capture**: Hardware-accelerated multi-monitor capture via `xcap` (Tauri/Rust) and `desktopCapturer` (Electron).
-- 🎨 **Full Annotation Toolkit**: Rectangles, ellipses, arrows, freehand brush, mosaic/blur, text, undo/redo, color picker.
-- 📌 **Pin to Desktop**: Pin any captured area as a floating, draggable, resizable, always-on-top window.
-- 🖥️ **Multi-Display & HiDPI**: Automatic cross-monitor coordinate mapping and high-DPI scaling.
+- ⚡ **Captura Nativa**: Acelerada por hardware con `xcap` (Tauri/Rust) y `desktopCapturer` (Electron).
+- 🎨 **Herramientas de Anotación**: Rectángulos, elipses, flechas, pincel libre, mosaico, texto, deshacer/rehacer, cuentagotas.
+- 📌 **Fijar al Escritorio**: Fije cualquier recorte como una ventana flotante arrastrable, redimensionable y siempre visible.
+- 🖥️ **Multipantalla y HiDPI**: Mapeo automático de coordenadas multipantalla y escala de alta densidad de píxeles.
 
 ---
 
-## Tauri (v2) Integration
+## Integración en Tauri (v2)
 
-### 1. Install Dependency
+### 1. Instalar Dependencia
 
 ```bash
 npm install @open-snapora/tauri
-# or
+# o
 pnpm add @open-snapora/tauri
 ```
 
-### 2. Add Rust Plugin
+### 2. Añadir Plugin de Rust
 
-In `src-tauri/Cargo.toml`:
+En `src-tauri/Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -35,9 +35,9 @@ tauri = { version = "2.0", features = ["wry"] }
 tauri-plugin-snapora = { git = "https://github.com/open-toolkits/open-snapora.git" }
 ```
 
-### 3. Configure Permissions
+### 3. Configurar Permisos
 
-In `src-tauri/capabilities/default.json`:
+En `src-tauri/capabilities/default.json`:
 
 ```json
 {
@@ -51,9 +51,9 @@ In `src-tauri/capabilities/default.json`:
 }
 ```
 
-### 4. Register Plugin
+### 4. Registrar Plugin
 
-In `src-tauri/src/main.rs`:
+En `src-tauri/src/main.rs`:
 
 ```rust
 fn main() {
@@ -64,7 +64,7 @@ fn main() {
 }
 ```
 
-### 5. Take Screenshot
+### 5. Tomar Captura
 
 ```typescript
 import { capture, cancel, type ScreenshotResult } from '@open-snapora/tauri';
@@ -72,44 +72,44 @@ import { capture, cancel, type ScreenshotResult } from '@open-snapora/tauri';
 async function takeScreenshot() {
   try {
     const result: ScreenshotResult = await capture({
-      hideOwnerWindow: true, // Automatically hide caller window during capture
+      hideOwnerWindow: true, // Ocultar automáticamente la ventana anfitriona
     });
 
     if (result.status === 'completed') {
-      console.log('Image bytes:', result.data);
-      console.log('Selection bounds:', result.bounds);
-      console.log('Output target:', result.output);
+      console.log('Bytes de imagen:', result.data);
+      console.log('Límites:', result.bounds);
+      console.log('Acción de salida:', result.output);
     }
   } catch (error) {
-    console.error('Capture failed:', error);
+    console.error('Error al capturar:', error);
   }
 }
 ```
 
-### 6. Build Release (Windows .exe)
+### 6. Compilar Release (Windows .exe)
 
 ```bash
 tauri build
 ```
 
-- **Portable standalone `.exe`**: Set `"bundle": { "active": false }` in `tauri.conf.json`.
-- **Installer package (NSIS / MSI)**: Set `"bundle": { "active": true, "targets": ["nsis", "msi"] }` in `tauri.conf.json`.
+- **`.exe` Portátil Único**: Establezca `"bundle": { "active": false }` en `tauri.conf.json`.
+- **Instalador (NSIS / MSI)**: Establezca `"bundle": { "active": true, "targets": ["nsis", "msi"] }` en `tauri.conf.json`.
 
 ---
 
-## Electron Integration
+## Integración en Electron
 
-### 1. Install Dependency
+### 1. Instalar Dependencia
 
 ```bash
 npm install @open-snapora/electron
-# or
+# o
 pnpm add @open-snapora/electron
 ```
 
-### 2. Initialize in Main Process
+### 2. Inicializar en el Proceso Principal
 
-In your main process script:
+En su script de proceso principal:
 
 ```javascript
 const { app, BrowserWindow, globalShortcut } = require('electron');
@@ -120,10 +120,10 @@ let snapora = null;
 app.whenReady().then(() => {
   snapora = setupSnaporaMain({
     onComplete: (data) => {
-      console.log('Capture completed:', data);
+      console.log('Captura completada:', data);
     },
     onCancel: (reason) => {
-      console.log('Capture canceled:', reason);
+      console.log('Captura cancelada:', reason);
     },
   });
 
@@ -139,13 +139,13 @@ app.on('will-quit', () => {
 
 ---
 
-## API Reference
+## Referencia de API
 
 ### `capture(options?: ScreenshotOptions): Promise<ScreenshotResult>`
 
-| Option | Type | Default | Description |
+| Opción | Tipo | Predeterminado | Descripción |
 | :--- | :--- | :--- | :--- |
-| `hideOwnerWindow` | `boolean` | `false` | Automatically hide current host window before capturing |
+| `hideOwnerWindow` | `boolean` | `false` | Ocultar automáticamente la ventana actual antes de capturar |
 
 ### `ScreenshotResult`
 
@@ -165,14 +165,14 @@ type ScreenshotResult =
 
 ---
 
-## Example Demos
+## Proyectos de Ejemplo
 
-Complete reference implementations are available in `demos/`:
-- `demos/tauri/`: Tauri (v2) integration example
-- `demos/electron/`: Electron integration example
+Puede consultar ejemplos de implementación completos en el directorio `demos/`:
+- `demos/tauri/`: Ejemplo en Tauri (v2)
+- `demos/electron/`: Ejemplo en Electron
 
 ---
 
-## License
+## Licencia
 
 [MIT License](./LICENSE)

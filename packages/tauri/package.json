@@ -1,8 +1,40 @@
 {
   "name": "@open-snapora/tauri",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "Tauri v2 host adapter and frontend bindings for open-snapora",
   "license": "MIT",
+  "author": "open-snapora authors",
+  "homepage": "https://github.com/open-toolkits/open-snapora#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-toolkits/open-snapora.git",
+    "directory": "packages/tauri"
+  },
+  "bugs": {
+    "url": "https://github.com/open-toolkits/open-snapora/issues"
+  },
+  "keywords": [
+    "screenshot",
+    "annotation",
+    "tauri",
+    "tauri-v2",
+    "rust",
+    "xcap",
+    "open-snapora"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "bin": {
+    "open-snapora-tauri": "./bin/cli.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,7 +49,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/sync-overlay.mjs",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

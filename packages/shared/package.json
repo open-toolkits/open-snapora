@@ -1,8 +1,35 @@
 {
   "name": "@open-snapora/shared",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "Shared core logic, geometry algorithms, protocol contracts, and i18n for open-snapora",
   "license": "MIT",
+  "author": "open-snapora authors",
+  "homepage": "https://github.com/open-toolkits/open-snapora#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-toolkits/open-snapora.git",
+    "directory": "packages/shared"
+  },
+  "bugs": {
+    "url": "https://github.com/open-toolkits/open-snapora/issues"
+  },
+  "keywords": [
+    "screenshot",
+    "annotation",
+    "geometry",
+    "protocol",
+    "i18n",
+    "open-snapora"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -35,6 +62,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

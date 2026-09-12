@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-snapora"
-version = "0.1.0"
+version = "1.0.1"
 links = "tauri-plugin-snapora"
 authors = ["open-snapora authors"]
 description = "Tauri v2 plugin for open-snapora cross-framework screenshot and annotation"
