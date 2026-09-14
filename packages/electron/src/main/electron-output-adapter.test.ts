@@ -30,6 +30,21 @@ describe('ElectronOutputAdapter', () => {
     expect(copyImage).toHaveBeenCalledWith(new Uint8Array([1, 2, 3]));
   });
 
+  it('supports and awaits asynchronous copyImage implementations', async () => {
+    let order: string[] = [];
+    const copyImage = vi.fn(async () => {
+      await new Promise((r) => setTimeout(r, 10));
+      order.push('copied');
+    });
+    const adapter = new ElectronOutputAdapter({ copyImage });
+
+    const result = await adapter.execute(createPayload('copy'), { senderWebContentsId: 7 });
+    order.push('completed');
+
+    expect(result).toEqual({ status: 'completed', action: 'copy' });
+    expect(order).toEqual(['copied', 'completed']);
+  });
+
   it('returns the selected save path or preserves the overlay when cancelled', async () => {
     let saveResult: string | undefined = 'D:\\shots\\capture.png';
     const saveFile = vi.fn(async () => saveResult);

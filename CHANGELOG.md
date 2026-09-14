@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2026-09-14
+
+### Electron 44+ Clipboard Compatibility (剪贴板全版本兼容与异步安全)
+
+- **Fix Electron 44+ Clipboard Removal**:
+  - Electron 44 completely removed `clipboard.writeImage(image)`, which previously caused `EXPORT_FAILED` and prevented screenshot sessions from completing.
+  - Implemented multi-tier compatibility strategy:
+    - Primary: `clipboard.write({ image })` (officially recommended and supported across all Electron versions).
+    - Fallback 1: `clipboard.writeImage(image)` (legacy Electron versions).
+    - Fallback 2: `clipboard.writeBuffer('image/png', buffer)` (raw binary fallback).
+  - Ensured all asynchronous clipboard write operations are properly `await`ed before returning completion status and tearing down screenshot sessions.
+
+---
+
+## [1.0.3] - 2026-09-14
+
+### Improvements & Monorepo Tooling (优化与版本治理)
+
+- **Unified Version Management**:
+  - Added `pnpm run version:sync` and `pnpm run version:bump <ver>` to uniformly synchronize version across all subpackages (`packages/*`, `demos/*`, `Cargo.toml`).
+- **Intelligent Publish Pipeline**:
+  - `publish:packages` now pre-checks the npm registry and automatically skips versions that are already published, preventing pipeline interruptions.
+
+---
+
 ## [1.0.2] - 2026-09-12
 
 ### Architecture Refactoring & Pure Single-Package Publishing (单包架构重构与独立分发)

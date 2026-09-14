@@ -19,7 +19,7 @@ export interface ElectronOutputAdapterOptions {
     suggestedName: string,
     senderWebContentsId: number
   ) => Promise<string | undefined>;
-  copyImage?: (data: Uint8Array) => void;
+  copyImage?: (data: Uint8Array) => void | Promise<void>;
   pinImage?: (
     result: ScreenshotOutputPayload['result'],
     options: ScreenshotOptions
@@ -67,7 +67,9 @@ export class ElectronOutputAdapter implements ScreenshotOutputExecutor {
     context: ScreenshotOutputContext
   ): Promise<ScreenshotOutputResponse> {
     if (payload.action === 'copy') {
-      this.#copyImage(payload.result.data);
+      // 复杂逻辑注释：必须 await 等待剪贴板写入成功后再返回 completed 状态，
+      // 避免截图窗口过早退出或销毁导致异步复制中断或剪贴板数据丢失。
+      await this.#copyImage(payload.result.data);
       return { status: 'completed', action: 'copy' };
     }
 
