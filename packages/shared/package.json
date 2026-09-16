@@ -1,6 +1,6 @@
 {
   "name": "@open-snapora/shared",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "description": "Shared core logic, geometry algorithms, protocol contracts, and i18n for open-snapora",
   "license": "MIT",
@@ -16,10 +16,14 @@
   },
   "keywords": [
     "screenshot",
+    "screen-capture",
     "annotation",
+    "image-annotation",
     "geometry",
     "protocol",
     "i18n",
+    "multi-monitor",
+    "screen-markup",
     "open-snapora"
   ],
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "open-snapora-monorepo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "description": "Cross-framework desktop screenshot & annotation suite for Electron, Tauri, and Webview",
   "license": "MIT",

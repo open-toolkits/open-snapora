@@ -1,6 +1,6 @@
 {
   "name": "@open-snapora/overlay",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "description": "Host-agnostic Web screenshot annotation and overlay editor for open-snapora",
   "license": "MIT",

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2026-09-16
+
+### Metadata & Search Visibility (元数据与开发者搜索能见度优化)
+
+- **Comprehensive Keyword Expansion (关键词全场景扩充)**:
+  - Greatly expanded search keywords across `@open-snapora/electron` and `@open-snapora/tauri` to 60+ targeted terms.
+  - Enhanced searchability for window snapping (`window-snapping`, `smart-snapping`), desktop pinning (`pin-image`, `always-on-top`, `floating-window`), screen drawing & markup (`drawing-tool`, `screen-markup`, `mosaic`, `blur`), multi-monitor HiDPI (`hidpi`, `retina`, `per-monitor-dpi`), and framework integrations (`desktopCapturer`, `tauri-plugin-snapora`).
+
+---
+
 ## [1.0.5] - 2026-09-16
 
 ### Architecture Refactoring & Stability Hardening (整体架构分层重构与稳定性强化)

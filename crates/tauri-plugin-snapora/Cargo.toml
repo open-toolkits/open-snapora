@@ -1,12 +1,14 @@
 [package]
 name = "tauri-plugin-snapora"
-version = "1.0.5"
+version = "1.0.6"
 links = "tauri-plugin-snapora"
 authors = ["open-snapora authors"]
 description = "Tauri v2 plugin for open-snapora cross-framework screenshot and annotation"
 edition = "2021"
 rust-version = "1.77.2"
 license = "MIT"
+keywords = ["tauri", "tauri-plugin", "screenshot", "screen-capture", "annotation"]
+categories = ["gui", "multimedia"]
 
 [dependencies]
 tauri = { version = "2.0", default-features = false }

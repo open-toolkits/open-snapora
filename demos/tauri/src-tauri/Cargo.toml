@@ -1,6 +1,6 @@
 [package]
 name = "demo-tauri"
-version = "1.0.5"
+version = "1.0.6"
 description = "Tauri v2 demo application for open-snapora"
 authors = ["open-snapora authors"]
 edition = "2021"

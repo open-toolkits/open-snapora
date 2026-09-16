@@ -588,7 +588,7 @@ dependencies = [
 
 [[package]]
 name = "demo-tauri"
-version = "1.0.5"
+version = "1.0.6"
 dependencies = [
  "serde",
  "serde_json",
@@ -3378,7 +3378,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-snapora"
-version = "1.0.5"
+version = "1.0.6"
 dependencies = [
  "arboard",
  "base64 0.22.1",
