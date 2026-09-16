@@ -1,5 +1,50 @@
 use serde::{Deserialize, Serialize};
 
+/// 支持的图像 MIME 规范类型
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ImageMimeType {
+    #[serde(rename = "image/png")]
+    Png,
+    #[serde(rename = "image/jpeg")]
+    Jpeg,
+    #[serde(rename = "image/webp")]
+    Webp,
+}
+
+impl ImageMimeType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Png => "image/png",
+            Self::Jpeg => "image/jpeg",
+            Self::Webp => "image/webp",
+        }
+    }
+}
+
+/// 轻量图像引用对象，解耦大型内存 Vec<u8>
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ImageRef {
+    pub id: String,
+    pub mime_type: ImageMimeType,
+    pub width: u32,
+    pub height: u32,
+}
+
+/// 截图会话的完整生命周期状态机
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum SessionStatus {
+    Created,
+    Capturing,
+    OverlayReady,
+    Editing,
+    Processing,
+    Completed,
+    Cancelled,
+    Failed,
+}
+
 /// 屏幕选区/显示器逻辑边界
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScreenshotBounds {

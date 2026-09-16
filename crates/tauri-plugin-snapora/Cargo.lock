@@ -3003,7 +3003,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-snapora"
-version = "1.0.3"
+version = "1.0.5"
 dependencies = [
  "arboard",
  "base64 0.22.1",

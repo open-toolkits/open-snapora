@@ -1,3 +1,4 @@
+import { ipcMain as electronIpcMain } from 'electron';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 
 import type { ScreenshotResult } from '@open-snapora/shared';
@@ -9,13 +10,15 @@ import { parseScreenshotOptions } from '../protocol/validators.js';
 import { resolveHostPreloadPath } from './resource-paths.js';
 import {
   ScreenshotManager,
+  type ScreenshotBusyPolicy,
   type ScreenshotManagerOptions,
 } from './screenshot-manager.js';
+import type { ScreenshotResourceLimitOptions } from '../protocol/limits.js';
 
 export type ValidateScreenshotIpcSender = (event: IpcMainInvokeEvent) => boolean;
 
 export interface RegisterScreenshotIpcOptions {
-  ipcMain: IpcMain;
+  ipcMain?: IpcMain;
   manager: ScreenshotManager;
   channel?: string;
   cancelChannel?: string;
@@ -27,6 +30,8 @@ export interface SetupElectronSnaporaOptions extends Omit<
   'manager'
 > {
   managerOptions?: ScreenshotManagerOptions;
+  busyPolicy?: ScreenshotBusyPolicy;
+  resourceLimits?: ScreenshotResourceLimitOptions;
 }
 
 export interface SetupElectronSnaporaResult {
@@ -40,10 +45,15 @@ export interface SetupElectronSnaporaResult {
  * 高级宿主仍可分别使用 ScreenshotManager 和 registerScreenshotIpc。
  */
 export function setupElectronSnapora(
-  options: SetupElectronSnaporaOptions
+  options: SetupElectronSnaporaOptions = {}
 ): SetupElectronSnaporaResult {
-  const { managerOptions, ...ipcOptions } = options;
-  const manager = new ScreenshotManager(managerOptions);
+  const { managerOptions, busyPolicy, resourceLimits, ...ipcOptions } = options;
+  const resolvedManagerOptions: ScreenshotManagerOptions = {
+    ...managerOptions,
+    ...(busyPolicy ? { busyPolicy } : {}),
+    ...(resourceLimits ? { resourceLimits } : {}),
+  };
+  const manager = new ScreenshotManager(resolvedManagerOptions);
   const unregisterIpc = registerScreenshotIpc({ ...ipcOptions, manager });
 
   return {
@@ -60,12 +70,17 @@ export function setupElectronSnapora(
 export function registerScreenshotIpc(
   options: RegisterScreenshotIpcOptions
 ): () => void {
+  const ipc = options.ipcMain ?? electronIpcMain;
+  if (!ipc) {
+    throw new Error('Electron ipcMain is not available. Please pass ipcMain in options or run in Electron main process.');
+  }
+
   const channel = options.channel ?? DEFAULT_HOST_CAPTURE_CHANNEL;
   const cancelChannel =
     options.cancelChannel ??
     (options.channel ? `${options.channel}:cancel` : DEFAULT_HOST_CANCEL_CHANNEL);
 
-  options.ipcMain.handle(channel, async (event, captureOptions: unknown) => {
+  ipc.handle(channel, async (event, captureOptions: unknown) => {
     if (!isAuthorizedSender(event, options.validateSender)) {
       return invalidRequest('The screenshot request sender is not authorized.');
     }
@@ -87,7 +102,7 @@ export function registerScreenshotIpc(
     }
   });
 
-  options.ipcMain.handle(cancelChannel, async (event) => {
+  ipc.handle(cancelChannel, async (event) => {
     if (!isAuthorizedSender(event, options.validateSender)) {
       return false;
     }
@@ -95,8 +110,8 @@ export function registerScreenshotIpc(
   });
 
   return () => {
-    options.ipcMain.removeHandler(channel);
-    options.ipcMain.removeHandler(cancelChannel);
+    ipc.removeHandler(channel);
+    ipc.removeHandler(cancelChannel);
   };
 }
 

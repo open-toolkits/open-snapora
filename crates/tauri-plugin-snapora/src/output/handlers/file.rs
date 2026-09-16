@@ -1,35 +1,11 @@
-﻿use std::borrow::Cow;
 use std::fs;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
-use arboard::{Clipboard, ImageData};
 use crate::error::Error;
+use crate::image::ImageBuffer;
+use super::super::{OutputContext, OutputHandler};
 
-/// 将导出的 PNG 图像数据解码并写入操作系统剪贴板
-pub fn copy_png_to_clipboard(png_bytes: &[u8]) -> Result<(), Error> {
-    let img = image::load_from_memory(png_bytes)
-        .map_err(|e| Error::CaptureFailed(format!("解码截图数据失败: {e}")))?
-        .to_rgba8();
-
-    let (width, height) = img.dimensions();
-    let raw_bytes = img.into_raw();
-
-    let mut clipboard = Clipboard::new()
-        .map_err(|e| Error::CaptureFailed(format!("无法打开系统剪贴板: {e}")))?;
-
-    let img_data = ImageData {
-        width: width as usize,
-        height: height as usize,
-        bytes: Cow::Owned(raw_bytes),
-    };
-
-    clipboard.set_image(img_data)
-        .map_err(|e| Error::CaptureFailed(format!("写入系统剪贴板失败: {e}")))?;
-
-    Ok(())
-}
-
-/// 将截图保存到本地磁盘文件
+/// 将 PNG 图像字节保存到指定文件路径或默认临时目录
 pub fn save_png_to_disk(png_bytes: &[u8], custom_path: Option<String>) -> Result<String, Error> {
     let target_path = match custom_path {
         Some(p) => PathBuf::from(p),
@@ -54,4 +30,24 @@ pub fn save_png_to_disk(png_bytes: &[u8], custom_path: Option<String>) -> Result
         .map_err(|e| Error::CaptureFailed(format!("写入截图文件失败: {e}")))?;
 
     Ok(target_path.to_string_lossy().to_string())
+}
+
+/// 文件保存输出处理器
+#[derive(Default)]
+pub struct FileOutputHandler;
+
+impl OutputHandler for FileOutputHandler {
+    fn can_handle(&self, action: &str) -> bool {
+        action == "save"
+    }
+
+    fn execute(
+        &self,
+        image: &ImageBuffer,
+        context: &OutputContext,
+    ) -> Result<Option<String>, Error> {
+        let saved_path = save_png_to_disk(&image.bytes, context.file_path.clone())?;
+        crate::logger::write_log("Snapora:Output", &format!("FileOutputHandler -> 截图已保存至: {saved_path}"));
+        Ok(Some(saved_path))
+    }
 }

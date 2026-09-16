@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2026-09-16
+
+### Architecture Refactoring & Stability Hardening (整体架构分层重构与稳定性强化)
+
+#### 🚀 Architectural Layering & Decoupling (架构分层与核心解耦)
+- **Session Lifecycle & ImageStore Decoupling**:
+  - Completely detached heavy image byte buffers (`Vec<u8>`) from `ActiveSession`.
+  - Introduced centralized `ImageStore` to independently manage raw screenshots (`source`) and exported annotations (`output`) by `job_id`.
+  - Sessions now only store lightweight `ImageRef` and state machine contexts, preventing memory inflation and leaks.
+- **Strict Job ID Lifecycle & 8-Stage State Machine**:
+  - Implemented explicit session state transitions: `Created` → `Capturing` → `OverlayReady` → `Editing` → `Processing` → `Completed` / `Cancelled` / `Failed`.
+  - Enforced strict `jobId` validation across all session commands (`confirm`, `cancel`, `report_error`, `output`), returning `Error::StaleSession` when receiving mismatched or stale asynchronous callbacks.
+- **Application Service Layering**:
+  - Extracted `CaptureService` to encapsulate complete screenshot lifecycle orchestration (capture, window snapping, session registration, overlay management, promise awaiting).
+  - Simplified `commands/` into a thin IPC adapter layer without inlined business complexity.
+- **Platform & Window Decoupling**:
+  - Abstracted `ScreenCapture` and `WindowProvider` traits.
+  - Extracted `SnapRegionCalculator` for window snapping heuristics.
+  - Isolated OS-specific Win32 APIs (`EnumWindows`, `DwmGetWindowAttribute`, Per-Monitor V2 DPI awareness) into `platform/windows`.
+- **Extensible Output Architecture**:
+  - Introduced `OutputManager` and `OutputHandler` trait, making clipboard and disk file export modular and ready for upcoming OCR/AI/Upload extensions.
+  - Decoupled `PinnedManager` from screenshot sessions, allowing pinned float windows to have completely independent lifecycles.
+
+#### 🐛 Bug Fixes & Runtime Resilience (修复与运行鲁棒性)
+- **Electron Host IPC Fallback**:
+  - Fixed `TypeError: Cannot read properties of undefined (reading 'handle')` in `setupElectronSnapora` by defaulting to `electron.ipcMain` when not explicitly provided.
+  - Supported top-level `busyPolicy` passing in `setupElectronSnapora`.
+- **Tauri Vite Port Collision Auto-Healing**:
+  - Added auto-detection and safe cleanup of orphan processes on port `1420` in `demos/tauri/scripts/sync-overlay.mjs`, eliminating `Error: Port 1420 is already in use` interruptions during local development.
+
+---
+
 ## [1.0.4] - 2026-09-14
 
 ### Electron 44+ Clipboard Compatibility (剪贴板全版本兼容与异步安全)

@@ -44,10 +44,20 @@ pub struct DragState {
     pub win_y: i32,
 }
 
+/// 贴图窗口独立生命周期管理器（PinnedManager）
+/// 
+/// 贴图窗口的生命周期完全独立于截图 CaptureSession。
+/// 当截图完成/确认贴图后，CaptureSession 正常销毁，PinnedManager 接管贴图的拖拽、缩放、复制与保存。
 pub struct PinnedManager {
     sessions: Mutex<HashMap<String, PinnedSession>>,
     drag_states: Mutex<HashMap<String, DragState>>,
     counter: AtomicU64,
+}
+
+impl Default for PinnedManager {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl PinnedManager {
@@ -107,7 +117,7 @@ pub fn create_pinned_window<R: Runtime>(
     let phys_y = bounds.y.round() as i32;
 
     crate::logger::write_log(
-        "Snapora:Rust",
+        "Snapora:Pinned",
         &format!("创建贴图置顶窗口 [{label}] 物理尺寸: {phys_width}x{phys_height} 物理坐标: ({phys_x}, {phys_y})"),
     );
 
@@ -146,12 +156,12 @@ pub fn create_pinned_window<R: Runtime>(
 /// 贴图页面就绪，请求自身图片载荷及本地化配置
 #[tauri::command]
 pub async fn pinned_ready<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
 ) -> Result<PinnedInitData, Error> {
     let label = window.label();
-    crate::logger::write_log("Snapora:Rust", &format!("pinned_ready() called from [{label}]"));
-    let pinned_mgr = app.state::<PinnedManager>();
+    crate::logger::write_log("Snapora:Pinned", &format!("pinned_ready() called from [{label}]"));
+    let pinned_mgr = window.app_handle().state::<PinnedManager>();
     let session = pinned_mgr
         .get_session(label)
         .ok_or_else(|| Error::CaptureFailed(format!("未找到贴图窗口 [{label}] 的对应数据")))?;
@@ -186,12 +196,12 @@ pub async fn pinned_ready<R: Runtime>(
 /// 贴图右键菜单或快捷键触发复制
 #[tauri::command]
 pub async fn pinned_copy<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
 ) -> Result<(), Error> {
     let label = window.label();
-    crate::logger::write_log("Snapora:Rust", &format!("pinned_copy() called from [{label}]"));
-    let pinned_mgr = app.state::<PinnedManager>();
+    crate::logger::write_log("Snapora:Pinned", &format!("pinned_copy() called from [{label}]"));
+    let pinned_mgr = window.app_handle().state::<PinnedManager>();
     if let Some(session) = pinned_mgr.get_session(label) {
         output::copy_png_to_clipboard(&session.image_bytes)?;
         let _ = window.emit("plugin:snapora:pinned_copied", ());
@@ -202,12 +212,12 @@ pub async fn pinned_copy<R: Runtime>(
 /// 贴图右键菜单或快捷键触发保存
 #[tauri::command]
 pub async fn pinned_save<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
 ) -> Result<String, Error> {
     let label = window.label();
-    crate::logger::write_log("Snapora:Rust", &format!("pinned_save() called from [{label}]"));
-    let pinned_mgr = app.state::<PinnedManager>();
+    crate::logger::write_log("Snapora:Pinned", &format!("pinned_save() called from [{label}]"));
+    let pinned_mgr = window.app_handle().state::<PinnedManager>();
     if let Some(session) = pinned_mgr.get_session(label) {
         let path = output::save_png_to_disk(&session.image_bytes, None)?;
         return Ok(path);
@@ -218,12 +228,12 @@ pub async fn pinned_save<R: Runtime>(
 /// 关闭并销毁贴图窗口
 #[tauri::command]
 pub async fn pinned_close<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
 ) -> Result<(), Error> {
     let label = window.label();
-    crate::logger::write_log("Snapora:Rust", &format!("pinned_close() called from [{label}]"));
-    let pinned_mgr = app.state::<PinnedManager>();
+    crate::logger::write_log("Snapora:Pinned", &format!("pinned_close() called from [{label}]"));
+    let pinned_mgr = window.app_handle().state::<PinnedManager>();
     pinned_mgr.remove_session(label);
     let _ = window.destroy();
     Ok(())
@@ -238,13 +248,13 @@ pub struct PinnedPoint {
 /// 开始窗口拖拽
 #[tauri::command]
 pub async fn pinned_start_drag<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
     point: Option<PinnedPoint>,
 ) -> Result<(), Error> {
     let label = window.label();
     if let Some(pt) = point {
-        let pinned_mgr = app.state::<PinnedManager>();
+        let pinned_mgr = window.app_handle().state::<PinnedManager>();
         if let Ok(pos) = window.outer_position() {
             if let Ok(mut states) = pinned_mgr.drag_states.lock() {
                 states.insert(label.to_string(), DragState {
@@ -263,13 +273,13 @@ pub async fn pinned_start_drag<R: Runtime>(
 /// 随鼠标移动动态平移窗口
 #[tauri::command]
 pub async fn pinned_move_drag<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
     point: Option<PinnedPoint>,
 ) -> Result<(), Error> {
     if let Some(pt) = point {
         let label = window.label();
-        let pinned_mgr = app.state::<PinnedManager>();
+        let pinned_mgr = window.app_handle().state::<PinnedManager>();
         let drag_state = {
             let states = pinned_mgr.drag_states.lock().ok();
             states.and_then(|s| s.get(label).copied())
@@ -290,11 +300,11 @@ pub async fn pinned_move_drag<R: Runtime>(
 /// 结束拖拽
 #[tauri::command]
 pub async fn pinned_end_drag<R: Runtime>(
-    app: AppHandle<R>,
+    _app: AppHandle<R>,
     window: WebviewWindow<R>,
 ) -> Result<(), Error> {
     let label = window.label();
-    let pinned_mgr = app.state::<PinnedManager>();
+    let pinned_mgr = window.app_handle().state::<PinnedManager>();
     if let Ok(mut states) = pinned_mgr.drag_states.lock() {
         states.remove(label);
     }

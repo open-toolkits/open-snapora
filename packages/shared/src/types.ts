@@ -128,12 +128,40 @@ export type ScreenshotErrorCode =
   | 'UNSUPPORTED_PLATFORM';
 
 /**
+ * 支持的图像 MIME 规范类型
+ */
+export type ImageMimeType = 'image/png' | 'image/jpeg' | 'image/webp';
+
+/**
+ * 轻量图片引用契约，用于跨进程/跨层传递图片标识与规格，解耦大二进制实体
+ */
+export interface ImageRef {
+  id: string;
+  mimeType: ImageMimeType;
+  width: number;
+  height: number;
+}
+
+/**
+ * 截图会话生命周期状态枚举
+ */
+export type SessionStatus =
+  | 'Created'
+  | 'Capturing'
+  | 'OverlayReady'
+  | 'Editing'
+  | 'Processing'
+  | 'Completed'
+  | 'Cancelled'
+  | 'Failed';
+
+/**
  * 成功完成截图的图像结果数据
  */
 export interface ScreenshotImageResult {
   status: 'completed';
   data: Uint8Array;
-  mimeType: 'image/png';
+  mimeType: ImageMimeType;
   bounds: ScreenshotBounds;
   displayId: string;
 }

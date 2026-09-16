@@ -22,6 +22,15 @@ pub enum Error {
     #[error("输出动作失败: {0}")]
     OutputError(String),
 
+    #[error("会话已过期或已被覆盖: {0}")]
+    StaleSession(String),
+
+    #[error("无效的任务 Job ID: {0}")]
+    InvalidJobId(String),
+
+    #[error("会话状态非法: {0}")]
+    InvalidStatus(String),
+
     #[error("Tauri 核心调用错误: {0}")]
     Tauri(#[from] tauri::Error),
 
@@ -48,6 +57,9 @@ impl Serialize for Error {
             Error::PermissionDenied(msg) => ("PERMISSION_DENIED", msg.clone()),
             Error::WindowError(msg) => ("OVERLAY_LOAD_FAILED", msg.clone()),
             Error::OutputError(msg) => ("EXPORT_FAILED", msg.clone()),
+            Error::StaleSession(msg) => ("STALE_SESSION", msg.clone()),
+            Error::InvalidJobId(msg) => ("INVALID_JOB_ID", msg.clone()),
+            Error::InvalidStatus(msg) => ("INVALID_STATUS", msg.clone()),
             Error::Tauri(err) => ("CAPTURE_FAILED", err.to_string()),
             Error::Json(err) => ("INVALID_REQUEST", err.to_string()),
         };

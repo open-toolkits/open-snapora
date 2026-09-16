@@ -1,6 +1,6 @@
 {
   "name": "@open-snapora/tauri",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Tauri v2 host adapter and frontend bindings for open-snapora",
   "license": "MIT",
   "author": "open-snapora authors",

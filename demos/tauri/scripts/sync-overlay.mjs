@@ -1,6 +1,27 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
+// 自动探测并清理之前残留占用 1420 端口的孤儿进程，防止 Vite 报 Port already in use
+if (process.platform === 'win32') {
+  try {
+    const netstat = execSync('netstat -ano -p tcp', { encoding: 'utf8' });
+    const lines = netstat.split('\n');
+    for (const line of lines) {
+      if (line.includes(':1420 ') && line.includes('LISTENING')) {
+        const parts = line.trim().split(/\s+/);
+        const pid = parts[parts.length - 1];
+        if (pid && pid !== String(process.pid)) {
+          console.log(`[demo-tauri] 发现残留孤儿进程 PID ${pid} 占用端口 1420，正在释放...`);
+          try {
+            execSync(`taskkill /F /PID ${pid}`, { stdio: 'ignore' });
+          } catch {}
+        }
+      }
+    }
+  } catch {}
+}
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const overlayDist = resolve(currentDir, '../../../packages/overlay/dist');

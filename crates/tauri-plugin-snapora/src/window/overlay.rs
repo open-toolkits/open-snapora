@@ -73,7 +73,7 @@ pub fn show_overlay_window<R: Runtime>(
 /// 预热透明遮罩窗口，在插件注册时即刻在后台创建并隐藏，提前完成 WebView2 运行时及静态资源加载
 pub fn prewarm_overlay_window<R: Runtime>(app: &AppHandle<R>) -> Result<(), Error> {
     if app.get_webview_window(OVERLAY_WINDOW_LABEL).is_none() {
-        crate::logger::write_log("Snapora:Rust", "Pre-warming overlay window in background...");
+        crate::logger::write_log("Snapora:Overlay", "Pre-warming overlay window in background...");
         let window = WebviewWindowBuilder::new(
             app,
             OVERLAY_WINDOW_LABEL,
@@ -91,7 +91,7 @@ pub fn prewarm_overlay_window<R: Runtime>(app: &AppHandle<R>) -> Result<(), Erro
         .map_err(|err| Error::WindowError(format!("预热透明全屏窗口失败: {err}")))?;
 
         let _ = window.hide();
-        crate::logger::write_log("Snapora:Rust", "Overlay window pre-warmed successfully.");
+        crate::logger::write_log("Snapora:Overlay", "Overlay window pre-warmed successfully.");
     }
     Ok(())
 }
