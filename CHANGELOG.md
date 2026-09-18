@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.7] - 2026-09-18
+
+### Documentation & Multi-Language Ecosystem (文档与多语言国际化体系重构)
+
+- **Comprehensive Multi-Language Documentation (全语言文档补全)**:
+  - Created full, production-grade documentation across 5 languages (English, 简体中文, 日本語, Español, 한국어) for both `@open-snapora/tauri` and `@open-snapora/electron`.
+  - Documented full feature matrices: silent background prewarming (`prewarm`), smart window snapping (`Window Snapping`), floating desktop pinned windows (`Pin to Desktop`), visual toast feedback (`showCopyFeedback`), granular telemetry (`onDiagnostic`), pluggable cloud output adapters (`outputAdapter`), and Tauri v2 granular capabilities permissions.
+- **Accurate Integration Guides & API Correction (接口使用修正与规范统一)**:
+  - Corrected Electron integration method signatures and documented `setupElectronSnapora` and `resolveHostPreloadPath`.
+  - Added complete TypeScript API reference tables (`ScreenshotOptions`, `ScreenshotResult`, `ScreenshotTheme`, `ScreenshotErrorCode`).
+- **Badges & Health Metrics (健康度与生态徽章补齐)**:
+  - Added NPM monthly download count badges (`npm/dm`), minzipped bundle size (`bundlephobia`), TypeScript Ready, and CI workflow status badges across all package documentation.
+
+---
+
 ## [1.0.6] - 2026-09-16
 
 ### Metadata & Search Visibility (元数据与开发者搜索能见度优化)
